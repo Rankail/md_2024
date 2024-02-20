@@ -84,6 +84,8 @@ public:
     void drawText(Point pos, const std::string& text, const std::string& fontFamily, unsigned fontSize, const Brush& brush, unsigned wrapLength = 0);
     void drawText(Point pos, const std::string& text, const std::string& fontFamily, unsigned fontSize, unsigned wrapLength = 0);
     void drawText(Point pos, const std::string& text, Font* font, const Brush& col, unsigned wrapLength = 0);
+
+    void drawCircle(Point center, double radius, const Brush& brush);
 };
 
 #endif

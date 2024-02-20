@@ -7,6 +7,7 @@
 #include "atlas/render/command/BezierRC.h"
 #include "atlas/render/command/PolyLineRC.h"
 #include "atlas/render/command/PolygonRC.h"
+#include "atlas/render/command/CircleRC.h"
 
 DC::DC()
     : commands(), width(0), height(0), commandCount(0) {
@@ -17,6 +18,7 @@ DC::DC()
     registerRenderCommand<BezierRC>();
     registerRenderCommand<TextureRC>();
     registerRenderCommand<TextRC>();
+    registerRenderCommand<CircleRC>();
 }
 
 DC::~DC() {
@@ -170,6 +172,10 @@ void DC::drawPolyLine(const std::vector<Point> &points, const Brush &br, int lin
 
 void DC::drawPolygon(const std::vector<Point> &points, const Brush &br) {
     drawCustom<PolygonRC>(points, br);
+}
+
+void DC::drawCircle(Point center, double radius, const Brush& brush) {
+    drawCustom<CircleRC>(center, radius, brush);
 }
 
 

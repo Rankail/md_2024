@@ -100,6 +100,11 @@ void Window::init() {
     bezierShader->addSourceAndCompile("./rsc/shader/fill.frag", GL_FRAGMENT_SHADER);
     bezierShader->link();
 
+    auto circleShader = new Shader();
+    circleShader->addSourceAndCompile("./rsc/shader/common/poly2uv.vert", GL_VERTEX_SHADER);
+    circleShader->addSourceAndCompile("./rsc/shader/circle.frag", GL_FRAGMENT_SHADER);
+    circleShader->link();
+
     auto computerFont = new FontFamily("./rsc/fonts/CMUNRM.TTF");
     computerFont->addStyle(FontStyle::BOLD, "./rsc/fonts/CMUNBX.TTF");
     computerFont->addStyle(FontStyle::ITALIC, "./rsc/fonts/CMUNTI.TTF");
@@ -119,6 +124,7 @@ void Window::init() {
     dc->registerShader("line", lineShader);
     dc->registerShader("polyline", polylineShader);
     dc->registerShader("bezier", bezierShader);
+    dc->registerShader("circle", circleShader);
 
     dc->registerFontFamily("computer", computerFont);
     dc->registerFontFamily("rodin", rodinFont);
@@ -133,4 +139,12 @@ void Window::render() {
     glClear(GL_COLOR_BUFFER_BIT);
 
     dc->drawLine({0, 0}, {200, 200}, Brush::solid(Colors::AQUAMARINE), 2);
+
+    dc->drawCircle({75, 100}, 25, Brush::solid(Colors::AQUAMARINE));
+    dc->drawCircle({100, 100}, 50.0, Brush::linear(
+        Colors::BOOGER_GREEN.withAlpha(0.9),
+        Colors::INDIGO.withAlpha(0.1),
+        {0, 0.5}, {1, 0.5},
+            0.9)
+    );
 }

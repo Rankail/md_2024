@@ -42,6 +42,8 @@ add_executable(t001
         src/atlas/render/Shader.cpp
         src/atlas/render/RC.cpp
         src/atlas/render/command/TextureRC.cpp
+        src/atlas/render/command/CircleRC.cpp
+        src/atlas/render/command/CircleRC.h
 )
 
 set_target_output_dirs(t001)

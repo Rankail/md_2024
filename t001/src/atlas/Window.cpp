@@ -4,12 +4,19 @@
 
 #include "Logger.h"
 
-Window::Window(const std::string &title, Vec2u size)
-    : Window(title, Vec2u{0, 0}, size, WindowFlag::SHOWN) {}
+Window::Window(const std::string &title, const Vec2u& size)
+    : Window(title, Vec2i{-1, -1}, size, WindowFlag::SHOWN) {}
 
-Window::Window(const std::string& title, Vec2u position, Vec2u size, WindowFlag flags) {
+Window::Window(const std::string& title, Vec2i position, Vec2u size, WindowFlag flags) {
+    if (position.x() < 0) {
+        position.x() = SDL_WINDOWPOS_UNDEFINED;
+    }
+    if (position.y() < 0) {
+        position.y() = SDL_WINDOWPOS_UNDEFINED;
+    }
+
     handle = SDL_CreateWindow(title.c_str(), (int)position.x(), (int)position.y(),
-        (int)size.y(), (int)size.x(), SDL_WINDOW_OPENGL | (unsigned)flags);
+        (int)size.x(), (int)size.y(), SDL_WINDOW_OPENGL | (unsigned)flags);
 
     if (handle == nullptr) {
         TET_ERROR("Failed to create window. {}", SDL_GetError());

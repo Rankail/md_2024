@@ -9,8 +9,8 @@
 #include <memory>
 
 #include "vec.h"
-#include "visualize/render/buffer/VertexBuffer.h"
-#include "visualize/render/buffer/VertexArray.h"
+#include "atlas/render/buffer/VertexBuffer.h"
+#include "atlas/render/buffer/VertexArray.h"
 
 #define RENDER_COMMAND()\
 private:                                                                            \

@@ -1,6 +1,6 @@
 #include "BezierRC.h"
 
-#include "visualize/render/DC.h"
+#include "atlas/render/DC.h"
 
 BezierRC::~BezierRC() {
 

@@ -2,7 +2,7 @@
 
 #include <glad/glad.h>
 
-#include "visualize/render/DC.h"
+#include "atlas/render/DC.h"
 
 RectRC::~RectRC() {
     delete vao;

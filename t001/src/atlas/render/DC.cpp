@@ -1,12 +1,12 @@
 #include "DC.h"
 
-#include "visualize/render/command/LineRC.h"
-#include "visualize/render/command/RectRC.h"
-#include "visualize/render/command/TextureRC.h"
-#include "visualize/render/command/TextRC.h"
-#include "visualize/render/command/BezierRC.h"
-#include "visualize/render/command/PolyLineRC.h"
-#include "visualize/render/command/PolygonRC.h"
+#include "atlas/render/command/LineRC.h"
+#include "atlas/render/command/RectRC.h"
+#include "atlas/render/command/TextureRC.h"
+#include "atlas/render/command/TextRC.h"
+#include "atlas/render/command/BezierRC.h"
+#include "atlas/render/command/PolyLineRC.h"
+#include "atlas/render/command/PolygonRC.h"
 
 DC::DC()
     : commands(), width(0), height(0), commandCount(0) {

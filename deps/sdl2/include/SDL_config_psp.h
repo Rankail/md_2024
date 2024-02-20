@@ -126,7 +126,7 @@
 /* PSP video dirver */
 #define SDL_VIDEO_DRIVER_PSP   1
 
-/* PSP visualize dirver */
+/* PSP atlas dirver */
 #define SDL_VIDEO_RENDER_PSP   1
 
 #define SDL_POWER_PSP          1

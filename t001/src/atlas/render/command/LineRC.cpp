@@ -1,6 +1,6 @@
 #include "LineRC.h"
 
-#include "visualize/render/DC.h"
+#include "atlas/render/DC.h"
 
 LineRC::~LineRC() {
     delete vao;

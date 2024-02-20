@@ -1,6 +1,6 @@
 #include "TextRC.h"
 
-#include "visualize/render/DC.h"
+#include "atlas/render/DC.h"
 #include "Logger.h"
 
 #define SDL_WHITE {0xFF, 0xFF, 0xFF, 0xFF}

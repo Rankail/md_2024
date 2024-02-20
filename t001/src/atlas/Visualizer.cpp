@@ -34,7 +34,7 @@ bool Visualizer::init(const Vec2u& size) {
         return false;
     }
 
-    window = new Window("MD 2024", size);
+    window = new Window("MD 2024", {-1, -1}, size, WindowFlag::SHOWN);
 
     gladLoadGLLoader(SDL_GL_GetProcAddress);
 

@@ -5,14 +5,14 @@
 
 #include "units/Rect.h"
 #include "units/Brush.h"
-#include "visualize/render/buffer/VertexBuffer.h"
-#include "visualize/render/buffer/ElementBuffer.h"
-#include "visualize/render/buffer/VertexArray.h"
-#include "visualize/render/RC.h"
-#include "visualize/render/Texture.h"
-#include "visualize/render/Shader.h"
-#include "visualize/render/font/Font.h"
-#include "visualize/render/font/FontFamily.h"
+#include "atlas/render/buffer/VertexBuffer.h"
+#include "atlas/render/buffer/ElementBuffer.h"
+#include "atlas/render/buffer/VertexArray.h"
+#include "atlas/render/RC.h"
+#include "atlas/render/Texture.h"
+#include "atlas/render/Shader.h"
+#include "atlas/render/font/Font.h"
+#include "atlas/render/font/FontFamily.h"
 
 class DC {
 private:

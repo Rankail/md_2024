@@ -13,35 +13,35 @@ add_executable(t001
         src/utils.h
         src/utils.cpp
         src/output/OutputPrinter.cpp
-        src/visualize/Visualizer.cpp
-        src/visualize/Visualizer.h
-        src/visualize/Visualizer.cpp
-        src/visualize/Window.cpp
-        src/visualize/Window.h
-        src/visualize/Hint.h
-        src/visualize/WindowFlag.h
-        src/visualize/render/DC.cpp
-        src/visualize/render/DC.h
-        src/visualize/render/Texture.cpp
-        src/visualize/render/buffer/BufferElement.cpp
-        src/visualize/render/buffer/BufferLayout.cpp
-        src/visualize/render/buffer/DynamicVertexBuffer.cpp
-        src/visualize/render/buffer/ElementBuffer.cpp
-        src/visualize/render/buffer/VertexArray.cpp
-        src/visualize/render/buffer/VertexBuffer.cpp
-        src/visualize/render/command/BezierRC.cpp
-        src/visualize/render/command/LineRC.cpp
-        src/visualize/render/command/PolygonRC.cpp
-        src/visualize/render/command/PolyLineRC.cpp
-        src/visualize/render/command/RectRC.cpp
-        src/visualize/render/font/Font.cpp
-        src/visualize/render/font/FontFamily.cpp
+        src/atlas/Visualizer.cpp
+        src/atlas/Visualizer.h
+        src/atlas/Visualizer.cpp
+        src/atlas/Window.cpp
+        src/atlas/Window.h
+        src/atlas/Hint.h
+        src/atlas/WindowFlag.h
+        src/atlas/render/DC.cpp
+        src/atlas/render/DC.h
+        src/atlas/render/Texture.cpp
+        src/atlas/render/buffer/BufferElement.cpp
+        src/atlas/render/buffer/BufferLayout.cpp
+        src/atlas/render/buffer/DynamicVertexBuffer.cpp
+        src/atlas/render/buffer/ElementBuffer.cpp
+        src/atlas/render/buffer/VertexArray.cpp
+        src/atlas/render/buffer/VertexBuffer.cpp
+        src/atlas/render/command/BezierRC.cpp
+        src/atlas/render/command/LineRC.cpp
+        src/atlas/render/command/PolygonRC.cpp
+        src/atlas/render/command/PolyLineRC.cpp
+        src/atlas/render/command/RectRC.cpp
+        src/atlas/render/font/Font.cpp
+        src/atlas/render/font/FontFamily.cpp
         src/utils/polygon.cpp
-        src/visualize/render/command/TextRC.cpp
+        src/atlas/render/command/TextRC.cpp
         src/uid.h
-        src/visualize/render/Shader.cpp
-        src/visualize/render/RC.cpp
-        src/visualize/render/command/TextureRC.cpp
+        src/atlas/render/Shader.cpp
+        src/atlas/render/RC.cpp
+        src/atlas/render/command/TextureRC.cpp
 )
 
 set_target_output_dirs(t001)

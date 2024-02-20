@@ -656,7 +656,7 @@ extern DECLSPEC int SDLCALL TTF_GetFontKerning(const TTF_Font *font);
  *
  * Newly-opened fonts default to allowing kerning. This is generally a good
  * policy unless you have a strong reason to disable it, as it tends to
- * produce better rendering (with kerning disabled, some fonts might visualize
+ * produce better rendering (with kerning disabled, some fonts might atlas
  * the word `kerning` as something that looks like `keming` for example).
  *
  * \param font the font to set kerning on.
@@ -814,9 +814,9 @@ extern DECLSPEC int SDLCALL TTF_GlyphMetrics32(TTF_Font *font, Uint32 ch,
  * Calculate the dimensions of a rendered string of Latin1 text.
  *
  * This will report the width and height, in pixels, of the space that the
- * specified string will take to fully visualize.
+ * specified string will take to fully atlas.
  *
- * This does not need to visualize the string to do this calculation.
+ * This does not need to atlas the string to do this calculation.
  *
  * You almost certainly want TTF_SizeUTF8() unless you're sure you have a
  * 1-byte Latin1 encoding. US ASCII characters will work with either function,
@@ -840,9 +840,9 @@ extern DECLSPEC int SDLCALL TTF_SizeText(TTF_Font *font, const char *text, int *
  * Calculate the dimensions of a rendered string of UTF-8 text.
  *
  * This will report the width and height, in pixels, of the space that the
- * specified string will take to fully visualize.
+ * specified string will take to fully atlas.
  *
- * This does not need to visualize the string to do this calculation.
+ * This does not need to atlas the string to do this calculation.
  *
  * \param font the font to query.
  * \param text text to calculate, in Latin1 encoding.
@@ -860,9 +860,9 @@ extern DECLSPEC int SDLCALL TTF_SizeUTF8(TTF_Font *font, const char *text, int *
  * Calculate the dimensions of a rendered string of UCS-2 text.
  *
  * This will report the width and height, in pixels, of the space that the
- * specified string will take to fully visualize.
+ * specified string will take to fully atlas.
  *
- * This does not need to visualize the string to do this calculation.
+ * This does not need to atlas the string to do this calculation.
  *
  * Please note that this function is named "Unicode" but currently expects
  * UCS-2 encoding (16 bits per codepoint). This does not give you access to
@@ -887,7 +887,7 @@ extern DECLSPEC int SDLCALL TTF_SizeUNICODE(TTF_Font *font, const Uint16 *text, 
  * This reports the number of characters that can be rendered before reaching
  * `measure_width`.
  *
- * This does not need to visualize the string to do this calculation.
+ * This does not need to atlas the string to do this calculation.
  *
  * You almost certainly want TTF_MeasureUTF8() unless you're sure you have a
  * 1-byte Latin1 encoding. US ASCII characters will work with either function,
@@ -916,7 +916,7 @@ extern DECLSPEC int SDLCALL TTF_MeasureText(TTF_Font *font, const char *text, in
  * This reports the number of characters that can be rendered before reaching
  * `measure_width`.
  *
- * This does not need to visualize the string to do this calculation.
+ * This does not need to atlas the string to do this calculation.
  *
  * \param font the font to query.
  * \param text text to calculate, in UTF-8 encoding.
@@ -940,7 +940,7 @@ extern DECLSPEC int SDLCALL TTF_MeasureUTF8(TTF_Font *font, const char *text, in
  * This reports the number of characters that can be rendered before reaching
  * `measure_width`.
  *
- * This does not need to visualize the string to do this calculation.
+ * This does not need to atlas the string to do this calculation.
  *
  * Please note that this function is named "Unicode" but currently expects
  * UCS-2 encoding (16 bits per codepoint). This does not give you access to
@@ -982,11 +982,11 @@ extern DECLSPEC int SDLCALL TTF_MeasureUNICODE(TTF_Font *font, const Uint16 *tex
  * function, but most other Unicode characters packed into a `const char *`
  * will need UTF-8.
  *
- * You can visualize at other quality levels with TTF_RenderText_Shaded,
+ * You can atlas at other quality levels with TTF_RenderText_Shaded,
  * TTF_RenderText_Blended, and TTF_RenderText_LCD.
  *
- * \param font the font to visualize with.
- * \param text text to visualize, in Latin1 encoding.
+ * \param font the font to atlas with.
+ * \param text text to atlas, in Latin1 encoding.
  * \param fg the foreground color for the text.
  * \returns a new 8-bit, palettized surface, or NULL if there was an error.
  *
@@ -1012,11 +1012,11 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderText_Solid(TTF_Font *font,
  *
  * This will not wrap on newline characters.
  *
- * You can visualize at other quality levels with TTF_RenderUTF8_Shaded,
+ * You can atlas at other quality levels with TTF_RenderUTF8_Shaded,
  * TTF_RenderUTF8_Blended, and TTF_RenderUTF8_LCD.
  *
- * \param font the font to visualize with.
- * \param text text to visualize, in UTF-8 encoding.
+ * \param font the font to atlas with.
+ * \param text text to atlas, in UTF-8 encoding.
  * \param fg the foreground color for the text.
  * \returns a new 8-bit, palettized surface, or NULL if there was an error.
  *
@@ -1048,11 +1048,11 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUTF8_Solid(TTF_Font *font,
  * large Unicode values, such as emoji glyphs. These codepoints are accessible
  * through the UTF-8 version of this function.
  *
- * You can visualize at other quality levels with TTF_RenderUNICODE_Shaded,
+ * You can atlas at other quality levels with TTF_RenderUNICODE_Shaded,
  * TTF_RenderUNICODE_Blended, and TTF_RenderUNICODE_LCD.
  *
- * \param font the font to visualize with.
- * \param text text to visualize, in UCS-2 encoding.
+ * \param font the font to atlas with.
+ * \param text text to atlas, in UCS-2 encoding.
  * \param fg the foreground color for the text.
  * \returns a new 8-bit, palettized surface, or NULL if there was an error.
  *
@@ -1080,11 +1080,11 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUNICODE_Solid(TTF_Font *font,
  * either function, but most other Unicode characters packed into a `const
  * char *` will need UTF-8.
  *
- * You can visualize at other quality levels with TTF_RenderText_Shaded_Wrapped,
+ * You can atlas at other quality levels with TTF_RenderText_Shaded_Wrapped,
  * TTF_RenderText_Blended_Wrapped, and TTF_RenderText_LCD_Wrapped.
  *
- * \param font the font to visualize with.
- * \param text text to visualize, in Latin1 encoding.
+ * \param font the font to atlas with.
+ * \param text text to atlas, in Latin1 encoding.
  * \param fg the foreground color for the text.
  * \returns a new 8-bit, palettized surface, or NULL if there was an error.
  *
@@ -1108,11 +1108,11 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderText_Solid_Wrapped(TTF_Font *fon
  *
  * If wrapLength is 0, this function will only wrap on newline characters.
  *
- * You can visualize at other quality levels with TTF_RenderUTF8_Shaded_Wrapped,
+ * You can atlas at other quality levels with TTF_RenderUTF8_Shaded_Wrapped,
  * TTF_RenderUTF8_Blended_Wrapped, and TTF_RenderUTF8_LCD_Wrapped.
  *
- * \param font the font to visualize with.
- * \param text text to visualize, in UTF-8 encoding.
+ * \param font the font to atlas with.
+ * \param text text to atlas, in UTF-8 encoding.
  * \param fg the foreground color for the text.
  * \returns a new 8-bit, palettized surface, or NULL if there was an error.
  *
@@ -1142,12 +1142,12 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUTF8_Solid_Wrapped(TTF_Font *fon
  * large Unicode values, such as emoji glyphs. These codepoints are accessible
  * through the UTF-8 version of this function.
  *
- * You can visualize at other quality levels with
+ * You can atlas at other quality levels with
  * TTF_RenderUNICODE_Shaded_Wrapped, TTF_RenderUNICODE_Blended_Wrapped, and
  * TTF_RenderUNICODE_LCD_Wrapped.
  *
- * \param font the font to visualize with.
- * \param text text to visualize, in UCS-2 encoding.
+ * \param font the font to atlas with.
+ * \param text text to atlas, in UCS-2 encoding.
  * \param fg the foreground color for the text.
  * \returns a new 8-bit, palettized surface, or NULL if there was an error.
  *
@@ -1177,11 +1177,11 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUNICODE_Solid_Wrapped(TTF_Font *
  * The only reason to use this function is that it was available since the
  * beginning of time, more or less.
  *
- * You can visualize at other quality levels with TTF_RenderGlyph_Shaded,
+ * You can atlas at other quality levels with TTF_RenderGlyph_Shaded,
  * TTF_RenderGlyph_Blended, and TTF_RenderGlyph_LCD.
  *
- * \param font the font to visualize with.
- * \param ch the character to visualize.
+ * \param font the font to atlas with.
+ * \param ch the character to atlas.
  * \param fg the foreground color for the text.
  * \returns a new 8-bit, palettized surface, or NULL if there was an error.
  *
@@ -1203,15 +1203,15 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderGlyph_Solid(TTF_Font *font,
  * and aligned normally in the Y direction.
  *
  * This is the same as TTF_RenderGlyph_Solid(), but takes a 32-bit character
- * instead of 16-bit, and thus can visualize a larger range. If you are sure
+ * instead of 16-bit, and thus can atlas a larger range. If you are sure
  * you'll have an SDL_ttf that's version 2.0.18 or newer, there's no reason
  * not to use this function exclusively.
  *
- * You can visualize at other quality levels with TTF_RenderGlyph32_Shaded,
+ * You can atlas at other quality levels with TTF_RenderGlyph32_Shaded,
  * TTF_RenderGlyph32_Blended, and TTF_RenderGlyph32_LCD.
  *
- * \param font the font to visualize with.
- * \param ch the character to visualize.
+ * \param font the font to atlas with.
+ * \param ch the character to atlas.
  * \param fg the foreground color for the text.
  * \returns a new 8-bit, palettized surface, or NULL if there was an error.
  *
@@ -1244,11 +1244,11 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderGlyph32_Solid(TTF_Font *font,
  * function, but most other Unicode characters packed into a `const char *`
  * will need UTF-8.
  *
- * You can visualize at other quality levels with TTF_RenderText_Solid,
+ * You can atlas at other quality levels with TTF_RenderText_Solid,
  * TTF_RenderText_Blended, and TTF_RenderText_LCD.
  *
- * \param font the font to visualize with.
- * \param text text to visualize, in Latin1 encoding.
+ * \param font the font to atlas with.
+ * \param text text to atlas, in Latin1 encoding.
  * \param fg the foreground color for the text.
  * \returns a new 8-bit, palettized surface, or NULL if there was an error.
  *
@@ -1275,11 +1275,11 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderText_Shaded(TTF_Font *font,
  *
  * This will not wrap on newline characters.
  *
- * You can visualize at other quality levels with TTF_RenderUTF8_Solid,
+ * You can atlas at other quality levels with TTF_RenderUTF8_Solid,
  * TTF_RenderUTF8_Blended, and TTF_RenderUTF8_LCD.
  *
- * \param font the font to visualize with.
- * \param text text to visualize, in UTF-8 encoding.
+ * \param font the font to atlas with.
+ * \param text text to atlas, in UTF-8 encoding.
  * \param fg the foreground color for the text.
  * \returns a new 8-bit, palettized surface, or NULL if there was an error.
  *
@@ -1310,11 +1310,11 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUTF8_Shaded(TTF_Font *font,
  * large Unicode values, such as emoji glyphs. These codepoints are accessible
  * through the UTF-8 version of this function.
  *
- * You can visualize at other quality levels with TTF_RenderUNICODE_Solid,
+ * You can atlas at other quality levels with TTF_RenderUNICODE_Solid,
  * TTF_RenderUNICODE_Blended, and TTF_RenderUNICODE_LCD.
  *
- * \param font the font to visualize with.
- * \param text text to visualize, in UCS-2 encoding.
+ * \param font the font to atlas with.
+ * \param text text to atlas, in UCS-2 encoding.
  * \param fg the foreground color for the text.
  * \returns a new 8-bit, palettized surface, or NULL if there was an error.
  *
@@ -1343,11 +1343,11 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUNICODE_Shaded(TTF_Font *font,
  * either function, but most other Unicode characters packed into a `const
  * char *` will need UTF-8.
  *
- * You can visualize at other quality levels with TTF_RenderText_Solid_Wrapped,
+ * You can atlas at other quality levels with TTF_RenderText_Solid_Wrapped,
  * TTF_RenderText_Blended_Wrapped, and TTF_RenderText_LCD_Wrapped.
  *
- * \param font the font to visualize with.
- * \param text text to visualize, in Latin1 encoding.
+ * \param font the font to atlas with.
+ * \param text text to atlas, in Latin1 encoding.
  * \param fg the foreground color for the text.
  * \returns a new 8-bit, palettized surface, or NULL if there was an error.
  *
@@ -1372,11 +1372,11 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderText_Shaded_Wrapped(TTF_Font *fo
  *
  * If wrapLength is 0, this function will only wrap on newline characters.
  *
- * You can visualize at other quality levels with TTF_RenderUTF8_Solid_Wrapped,
+ * You can atlas at other quality levels with TTF_RenderUTF8_Solid_Wrapped,
  * TTF_RenderUTF8_Blended_Wrapped, and TTF_RenderUTF8_LCD_Wrapped.
  *
- * \param font the font to visualize with.
- * \param text text to visualize, in UTF-8 encoding.
+ * \param font the font to atlas with.
+ * \param text text to atlas, in UTF-8 encoding.
  * \param fg the foreground color for the text.
  * \returns a new 8-bit, palettized surface, or NULL if there was an error.
  *
@@ -1407,12 +1407,12 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUTF8_Shaded_Wrapped(TTF_Font *fo
  * large Unicode values, such as emoji glyphs. These codepoints are accessible
  * through the UTF-8 version of this function.
  *
- * You can visualize at other quality levels with
+ * You can atlas at other quality levels with
  * TTF_RenderUNICODE_Solid_Wrapped, TTF_RenderUNICODE_Blended_Wrapped, and
  * TTF_RenderUNICODE_LCD_Wrapped.
  *
- * \param font the font to visualize with.
- * \param text text to visualize, in UCS-2 encoding.
+ * \param font the font to atlas with.
+ * \param text text to atlas, in UCS-2 encoding.
  * \param fg the foreground color for the text.
  * \returns a new 8-bit, palettized surface, or NULL if there was an error.
  *
@@ -1443,11 +1443,11 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUNICODE_Shaded_Wrapped(TTF_Font 
  * The only reason to use this function is that it was available since the
  * beginning of time, more or less.
  *
- * You can visualize at other quality levels with TTF_RenderGlyph_Solid,
+ * You can atlas at other quality levels with TTF_RenderGlyph_Solid,
  * TTF_RenderGlyph_Blended, and TTF_RenderGlyph_LCD.
  *
- * \param font the font to visualize with.
- * \param ch the character to visualize.
+ * \param font the font to atlas with.
+ * \param ch the character to atlas.
  * \param fg the foreground color for the text.
  * \returns a new 8-bit, palettized surface, or NULL if there was an error.
  *
@@ -1470,15 +1470,15 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderGlyph_Shaded(TTF_Font *font,
  * and aligned normally in the Y direction.
  *
  * This is the same as TTF_RenderGlyph_Shaded(), but takes a 32-bit character
- * instead of 16-bit, and thus can visualize a larger range. If you are sure
+ * instead of 16-bit, and thus can atlas a larger range. If you are sure
  * you'll have an SDL_ttf that's version 2.0.18 or newer, there's no reason
  * not to use this function exclusively.
  *
- * You can visualize at other quality levels with TTF_RenderGlyph32_Solid,
+ * You can atlas at other quality levels with TTF_RenderGlyph32_Solid,
  * TTF_RenderGlyph32_Blended, and TTF_RenderGlyph32_LCD.
  *
- * \param font the font to visualize with.
- * \param ch the character to visualize.
+ * \param font the font to atlas with.
+ * \param ch the character to atlas.
  * \param fg the foreground color for the text.
  * \returns a new 8-bit, palettized surface, or NULL if there was an error.
  *
@@ -1510,11 +1510,11 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderGlyph32_Shaded(TTF_Font *font,
  * function, but most other Unicode characters packed into a `const char *`
  * will need UTF-8.
  *
- * You can visualize at other quality levels with TTF_RenderText_Solid,
+ * You can atlas at other quality levels with TTF_RenderText_Solid,
  * TTF_RenderText_Blended, and TTF_RenderText_LCD.
  *
- * \param font the font to visualize with.
- * \param text text to visualize, in Latin1 encoding.
+ * \param font the font to atlas with.
+ * \param text text to atlas, in Latin1 encoding.
  * \param fg the foreground color for the text.
  * \returns a new 32-bit, ARGB surface, or NULL if there was an error.
  *
@@ -1540,11 +1540,11 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderText_Blended(TTF_Font *font,
  *
  * This will not wrap on newline characters.
  *
- * You can visualize at other quality levels with TTF_RenderUTF8_Solid,
+ * You can atlas at other quality levels with TTF_RenderUTF8_Solid,
  * TTF_RenderUTF8_Shaded, and TTF_RenderUTF8_LCD.
  *
- * \param font the font to visualize with.
- * \param text text to visualize, in UTF-8 encoding.
+ * \param font the font to atlas with.
+ * \param text text to atlas, in UTF-8 encoding.
  * \param fg the foreground color for the text.
  * \returns a new 32-bit, ARGB surface, or NULL if there was an error.
  *
@@ -1574,11 +1574,11 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUTF8_Blended(TTF_Font *font,
  * large Unicode values, such as emoji glyphs. These codepoints are accessible
  * through the UTF-8 version of this function.
  *
- * You can visualize at other quality levels with TTF_RenderUNICODE_Solid,
+ * You can atlas at other quality levels with TTF_RenderUNICODE_Solid,
  * TTF_RenderUNICODE_Shaded, and TTF_RenderUNICODE_LCD.
  *
- * \param font the font to visualize with.
- * \param text text to visualize, in UCS-2 encoding.
+ * \param font the font to atlas with.
+ * \param text text to atlas, in UCS-2 encoding.
  * \param fg the foreground color for the text.
  * \returns a new 32-bit, ARGB surface, or NULL if there was an error.
  *
@@ -1606,11 +1606,11 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUNICODE_Blended(TTF_Font *font,
  * either function, but most other Unicode characters packed into a `const
  * char *` will need UTF-8.
  *
- * You can visualize at other quality levels with TTF_RenderText_Solid_Wrapped,
+ * You can atlas at other quality levels with TTF_RenderText_Solid_Wrapped,
  * TTF_RenderText_Shaded_Wrapped, and TTF_RenderText_LCD_Wrapped.
  *
- * \param font the font to visualize with.
- * \param text text to visualize, in Latin1 encoding.
+ * \param font the font to atlas with.
+ * \param text text to atlas, in Latin1 encoding.
  * \param fg the foreground color for the text.
  * \returns a new 32-bit, ARGB surface, or NULL if there was an error.
  *
@@ -1634,11 +1634,11 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderText_Blended_Wrapped(TTF_Font *f
  *
  * If wrapLength is 0, this function will only wrap on newline characters.
  *
- * You can visualize at other quality levels with TTF_RenderUTF8_Solid_Wrapped,
+ * You can atlas at other quality levels with TTF_RenderUTF8_Solid_Wrapped,
  * TTF_RenderUTF8_Shaded_Wrapped, and TTF_RenderUTF8_LCD_Wrapped.
  *
- * \param font the font to visualize with.
- * \param text text to visualize, in UTF-8 encoding.
+ * \param font the font to atlas with.
+ * \param text text to atlas, in UTF-8 encoding.
  * \param fg the foreground color for the text.
  * \returns a new 32-bit, ARGB surface, or NULL if there was an error.
  *
@@ -1668,12 +1668,12 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUTF8_Blended_Wrapped(TTF_Font *f
  * large Unicode values, such as emoji glyphs. These codepoints are accessible
  * through the UTF-8 version of this function.
  *
- * You can visualize at other quality levels with
+ * You can atlas at other quality levels with
  * TTF_RenderUNICODE_Solid_Wrapped, TTF_RenderUNICODE_Shaded_Wrapped, and
  * TTF_RenderUNICODE_LCD_Wrapped.
  *
- * \param font the font to visualize with.
- * \param text text to visualize, in UCS-2 encoding.
+ * \param font the font to atlas with.
+ * \param text text to atlas, in UCS-2 encoding.
  * \param fg the foreground color for the text.
  * \returns a new 32-bit, ARGB surface, or NULL if there was an error.
  *
@@ -1703,11 +1703,11 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUNICODE_Blended_Wrapped(TTF_Font
  * The only reason to use this function is that it was available since the
  * beginning of time, more or less.
  *
- * You can visualize at other quality levels with TTF_RenderGlyph_Solid,
+ * You can atlas at other quality levels with TTF_RenderGlyph_Solid,
  * TTF_RenderGlyph_Shaded, and TTF_RenderGlyph_LCD.
  *
- * \param font the font to visualize with.
- * \param ch the character to visualize.
+ * \param font the font to atlas with.
+ * \param ch the character to atlas.
  * \param fg the foreground color for the text.
  * \returns a new 32-bit, ARGB surface, or NULL if there was an error.
  *
@@ -1729,15 +1729,15 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderGlyph_Blended(TTF_Font *font,
  * and aligned normally in the Y direction.
  *
  * This is the same as TTF_RenderGlyph_Blended(), but takes a 32-bit character
- * instead of 16-bit, and thus can visualize a larger range. If you are sure
+ * instead of 16-bit, and thus can atlas a larger range. If you are sure
  * you'll have an SDL_ttf that's version 2.0.18 or newer, there's no reason
  * not to use this function exclusively.
  *
- * You can visualize at other quality levels with TTF_RenderGlyph32_Solid,
+ * You can atlas at other quality levels with TTF_RenderGlyph32_Solid,
  * TTF_RenderGlyph32_Shaded, and TTF_RenderGlyph32_LCD.
  *
- * \param font the font to visualize with.
- * \param ch the character to visualize.
+ * \param font the font to atlas with.
+ * \param ch the character to atlas.
  * \param fg the foreground color for the text.
  * \returns a new 32-bit, ARGB surface, or NULL if there was an error.
  *
@@ -1753,7 +1753,7 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderGlyph32_Blended(TTF_Font *font,
 /**
  * Render Latin1 text at LCD subpixel quality to a new ARGB surface.
  *
- * This function will allocate a new 32-bit, ARGB surface, and visualize
+ * This function will allocate a new 32-bit, ARGB surface, and atlas
  * alpha-blended text using FreeType's LCD subpixel rendering. This function
  * returns the new surface, or NULL if there was an error.
  *
@@ -1769,11 +1769,11 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderGlyph32_Blended(TTF_Font *font,
  * function, but most other Unicode characters packed into a `const char *`
  * will need UTF-8.
  *
- * You can visualize at other quality levels with TTF_RenderText_Solid,
+ * You can atlas at other quality levels with TTF_RenderText_Solid,
  * TTF_RenderText_Shaded, and TTF_RenderText_Blended.
  *
- * \param font the font to visualize with.
- * \param text text to visualize, in Latin1 encoding.
+ * \param font the font to atlas with.
+ * \param text text to atlas, in Latin1 encoding.
  * \param fg the foreground color for the text.
  * \param bg the background color for the text.
  * \returns a new 32-bit, ARGB surface, or NULL if there was an error.
@@ -1789,7 +1789,7 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderText_LCD(TTF_Font *font,
 /**
  * Render UTF-8 text at LCD subpixel quality to a new ARGB surface.
  *
- * This function will allocate a new 32-bit, ARGB surface, and visualize
+ * This function will allocate a new 32-bit, ARGB surface, and atlas
  * alpha-blended text using FreeType's LCD subpixel rendering. This function
  * returns the new surface, or NULL if there was an error.
  *
@@ -1800,11 +1800,11 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderText_LCD(TTF_Font *font,
  *
  * This will not wrap on newline characters.
  *
- * You can visualize at other quality levels with TTF_RenderUTF8_Solid,
+ * You can atlas at other quality levels with TTF_RenderUTF8_Solid,
  * TTF_RenderUTF8_Shaded, and TTF_RenderUTF8_Blended.
  *
- * \param font the font to visualize with.
- * \param text text to visualize, in UTF-8 encoding.
+ * \param font the font to atlas with.
+ * \param text text to atlas, in UTF-8 encoding.
  * \param fg the foreground color for the text.
  * \param bg the background color for the text.
  * \returns a new 32-bit, ARGB surface, or NULL if there was an error.
@@ -1819,7 +1819,7 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUTF8_LCD(TTF_Font *font,
 /**
  * Render UCS-2 text at LCD subpixel quality to a new ARGB surface.
  *
- * This function will allocate a new 32-bit, ARGB surface, and visualize
+ * This function will allocate a new 32-bit, ARGB surface, and atlas
  * alpha-blended text using FreeType's LCD subpixel rendering. This function
  * returns the new surface, or NULL if there was an error.
  *
@@ -1835,11 +1835,11 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUTF8_LCD(TTF_Font *font,
  * large Unicode values, such as emoji glyphs. These codepoints are accessible
  * through the UTF-8 version of this function.
  *
- * You can visualize at other quality levels with TTF_RenderUNICODE_Solid,
+ * You can atlas at other quality levels with TTF_RenderUNICODE_Solid,
  * TTF_RenderUNICODE_Shaded, and TTF_RenderUNICODE_Blended.
  *
- * \param font the font to visualize with.
- * \param text text to visualize, in UCS-2 encoding.
+ * \param font the font to atlas with.
+ * \param text text to atlas, in UCS-2 encoding.
  * \param fg the foreground color for the text.
  * \param bg the background color for the text.
  * \returns a new 32-bit, ARGB surface, or NULL if there was an error.
@@ -1855,7 +1855,7 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUNICODE_LCD(TTF_Font *font,
  * Render word-wrapped Latin1 text at LCD subpixel quality to a new ARGB
  * surface.
  *
- * This function will allocate a new 32-bit, ARGB surface, and visualize
+ * This function will allocate a new 32-bit, ARGB surface, and atlas
  * alpha-blended text using FreeType's LCD subpixel rendering. This function
  * returns the new surface, or NULL if there was an error.
  *
@@ -1869,11 +1869,11 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUNICODE_LCD(TTF_Font *font,
  * either function, but most other Unicode characters packed into a `const
  * char *` will need UTF-8.
  *
- * You can visualize at other quality levels with TTF_RenderText_Solid_Wrapped,
+ * You can atlas at other quality levels with TTF_RenderText_Solid_Wrapped,
  * TTF_RenderText_Shaded_Wrapped, and TTF_RenderText_Blended_Wrapped.
  *
- * \param font the font to visualize with.
- * \param text text to visualize, in Latin1 encoding.
+ * \param font the font to atlas with.
+ * \param text text to atlas, in Latin1 encoding.
  * \param fg the foreground color for the text.
  * \param bg the background color for the text.
  * \returns a new 32-bit, ARGB surface, or NULL if there was an error.
@@ -1890,7 +1890,7 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderText_LCD_Wrapped(TTF_Font *font,
  * Render word-wrapped UTF-8 text at LCD subpixel quality to a new ARGB
  * surface.
  *
- * This function will allocate a new 32-bit, ARGB surface, and visualize
+ * This function will allocate a new 32-bit, ARGB surface, and atlas
  * alpha-blended text using FreeType's LCD subpixel rendering. This function
  * returns the new surface, or NULL if there was an error.
  *
@@ -1899,11 +1899,11 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderText_LCD_Wrapped(TTF_Font *font,
  *
  * If wrapLength is 0, this function will only wrap on newline characters.
  *
- * You can visualize at other quality levels with TTF_RenderUTF8_Solid_Wrapped,
+ * You can atlas at other quality levels with TTF_RenderUTF8_Solid_Wrapped,
  * TTF_RenderUTF8_Shaded_Wrapped, and TTF_RenderUTF8_Blended_Wrapped.
  *
- * \param font the font to visualize with.
- * \param text text to visualize, in UTF-8 encoding.
+ * \param font the font to atlas with.
+ * \param text text to atlas, in UTF-8 encoding.
  * \param fg the foreground color for the text.
  * \param bg the background color for the text.
  * \returns a new 32-bit, ARGB surface, or NULL if there was an error.
@@ -1921,7 +1921,7 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUTF8_LCD_Wrapped(TTF_Font *font,
  * Render word-wrapped UCS-2 text at LCD subpixel quality to a new ARGB
  * surface.
  *
- * This function will allocate a new 32-bit, ARGB surface, and visualize
+ * This function will allocate a new 32-bit, ARGB surface, and atlas
  * alpha-blended text using FreeType's LCD subpixel rendering. This function
  * returns the new surface, or NULL if there was an error.
  *
@@ -1935,12 +1935,12 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUTF8_LCD_Wrapped(TTF_Font *font,
  * large Unicode values, such as emoji glyphs. These codepoints are accessible
  * through the UTF-8 version of this function.
  *
- * You can visualize at other quality levels with
+ * You can atlas at other quality levels with
  * TTF_RenderUNICODE_Solid_Wrapped, TTF_RenderUNICODE_Shaded_Wrapped, and
  * TTF_RenderUNICODE_Blended_Wrapped.
  *
- * \param font the font to visualize with.
- * \param text text to visualize, in UCS-2 encoding.
+ * \param font the font to atlas with.
+ * \param text text to atlas, in UCS-2 encoding.
  * \param fg the foreground color for the text.
  * \param bg the background color for the text.
  * \returns a new 32-bit, ARGB surface, or NULL if there was an error.
@@ -1955,7 +1955,7 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUNICODE_LCD_Wrapped(TTF_Font *fo
 /**
  * Render a single 16-bit glyph at LCD subpixel quality to a new ARGB surface.
  *
- * This function will allocate a new 32-bit, ARGB surface, and visualize
+ * This function will allocate a new 32-bit, ARGB surface, and atlas
  * alpha-blended text using FreeType's LCD subpixel rendering. This function
  * returns the new surface, or NULL if there was an error.
  *
@@ -1971,11 +1971,11 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderUNICODE_LCD_Wrapped(TTF_Font *fo
  * This function only exists for consistency with the existing API at the time
  * of its addition.
  *
- * You can visualize at other quality levels with TTF_RenderGlyph_Solid,
+ * You can atlas at other quality levels with TTF_RenderGlyph_Solid,
  * TTF_RenderGlyph_Shaded, and TTF_RenderGlyph_Blended.
  *
- * \param font the font to visualize with.
- * \param ch the character to visualize.
+ * \param font the font to atlas with.
+ * \param ch the character to atlas.
  * \param fg the foreground color for the text.
  * \param bg the background color for the text.
  * \returns a new 32-bit, ARGB surface, or NULL if there was an error.
@@ -1990,7 +1990,7 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderGlyph_LCD(TTF_Font *font,
 /**
  * Render a single 32-bit glyph at LCD subpixel quality to a new ARGB surface.
  *
- * This function will allocate a new 32-bit, ARGB surface, and visualize
+ * This function will allocate a new 32-bit, ARGB surface, and atlas
  * alpha-blended text using FreeType's LCD subpixel rendering. This function
  * returns the new surface, or NULL if there was an error.
  *
@@ -1998,14 +1998,14 @@ extern DECLSPEC SDL_Surface * SDLCALL TTF_RenderGlyph_LCD(TTF_Font *font,
  * and aligned normally in the Y direction.
  *
  * This is the same as TTF_RenderGlyph_LCD(), but takes a 32-bit character
- * instead of 16-bit, and thus can visualize a larger range. Between the two, you
+ * instead of 16-bit, and thus can atlas a larger range. Between the two, you
  * should always use this function.
  *
- * You can visualize at other quality levels with TTF_RenderGlyph32_Solid,
+ * You can atlas at other quality levels with TTF_RenderGlyph32_Solid,
  * TTF_RenderGlyph32_Shaded, and TTF_RenderGlyph32_Blended.
  *
- * \param font the font to visualize with.
- * \param ch the character to visualize.
+ * \param font the font to atlas with.
+ * \param ch the character to atlas.
  * \param fg the foreground color for the text.
  * \param bg the background color for the text.
  * \returns a new 32-bit, ARGB surface, or NULL if there was an error.

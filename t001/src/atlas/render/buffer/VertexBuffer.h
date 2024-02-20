@@ -2,7 +2,7 @@
 #define MD_2024_VERTEXBUFFER_H
 
 #include "utils.h"
-#include "visualize/render/buffer/BufferLayout.h"
+#include "atlas/render/buffer/BufferLayout.h"
 
 class VertexBuffer {
 protected:

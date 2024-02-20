@@ -1,8 +1,8 @@
 #include "PolygonRC.h"
 
 #include "utils/polygon.h"
-#include "visualize/render/DC.h"
-#include "visualize/render/buffer/DynamicVertexBuffer.h"
+#include "atlas/render/DC.h"
+#include "atlas/render/buffer/DynamicVertexBuffer.h"
 
 PolygonRC::~PolygonRC() {
     delete vao;

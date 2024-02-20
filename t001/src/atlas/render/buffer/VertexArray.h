@@ -4,8 +4,8 @@
 #include <vector>
 
 #include "utils.h"
-#include "visualize/render/buffer/ElementBuffer.h"
-#include "visualize/render/buffer/VertexBuffer.h"
+#include "atlas/render/buffer/ElementBuffer.h"
+#include "atlas/render/buffer/VertexBuffer.h"
 
 class VertexArray {
 private:

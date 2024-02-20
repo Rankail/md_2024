@@ -1,6 +1,6 @@
 #include "TextureRC.h"
 
-#include "visualize/render/DC.h"
+#include "atlas/render/DC.h"
 
 TextureRC::~TextureRC() {
     delete vao;

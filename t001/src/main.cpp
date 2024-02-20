@@ -3,7 +3,7 @@
 #include "Logger.h"
 #include "input/InputReader.h"
 #include "output/OutputPrinter.h"
-#include "visualize/Visualizer.h"
+#include "atlas/Visualizer.h"
 
 int main(int argc, char** argv) {
     Logger::init();

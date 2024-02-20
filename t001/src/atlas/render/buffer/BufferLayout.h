@@ -6,7 +6,7 @@
 #include <initializer_list>
 #include <vector>
 
-#include "visualize/render/buffer/BufferElement.h"
+#include "atlas/render/buffer/BufferElement.h"
 
 class BufferLayout {
 private:

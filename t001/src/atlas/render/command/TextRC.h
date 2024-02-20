@@ -3,10 +3,10 @@
 
 #include "units/Rect.h"
 #include "units/Brush.h"
-#include "visualize/render/RC.h"
-#include "visualize/render/Shader.h"
-#include "visualize/render/Texture.h"
-#include "visualize/render/font/Font.h"
+#include "atlas/render/RC.h"
+#include "atlas/render/Shader.h"
+#include "atlas/render/Texture.h"
+#include "atlas/render/font/Font.h"
 
 #define TEXT_CACHE_SIZE 100
 

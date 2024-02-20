@@ -95,10 +95,10 @@ typedef enum
  * the SDL_BlendMode returned by this function if the renderer supports it.
  *
  * A blend mode controls how the pixels from a drawing operation (source) get
- * combined with the pixels from the visualize target (destination). First, the
+ * combined with the pixels from the atlas target (destination). First, the
  * components of the source and destination pixels get multiplied with their
  * blend factors. Then, the blend operation takes the two products and
- * calculates the result that will get stored in the visualize target.
+ * calculates the result that will get stored in the atlas target.
  *
  * Expressed in pseudocode, it would look like this:
  *
@@ -152,7 +152,7 @@ typedef enum
  * - **psp**: No custom blend mode support.
  * - **software**: No custom blend mode support.
  *
- * Some renderers do not provide an alpha component for the default visualize
+ * Some renderers do not provide an alpha component for the default atlas
  * target. The `SDL_BLENDFACTOR_DST_ALPHA` and
  * `SDL_BLENDFACTOR_ONE_MINUS_DST_ALPHA` factors do not have an effect in this
  * case.

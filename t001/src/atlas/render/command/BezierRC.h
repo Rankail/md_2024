@@ -2,8 +2,8 @@
 #define MD_2024_BEZIERRC_H
 
 #include "units/Rect.h"
-#include "visualize/render/RC.h"
-#include "visualize/render/Shader.h"
+#include "atlas/render/RC.h"
+#include "atlas/render/Shader.h"
 #include "units/Brush.h"
 
 class BezierRC : public RC {

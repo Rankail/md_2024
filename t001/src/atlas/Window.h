@@ -6,7 +6,7 @@
 
 #include "WindowFlag.h"
 #include "vec.h"
-#include "visualize/render/DC.h"
+#include "atlas/render/DC.h"
 
 class Window {
 protected:
@@ -18,8 +18,8 @@ protected:
     DC* dc = nullptr;
 
 public:
-    explicit Window(const std::string& title, Vec2u size = {800, 600});
-    explicit Window(const std::string& title, Vec2u position, Vec2u size, WindowFlag flags);
+    explicit Window(const std::string& title, const Vec2u& size = {800, 600});
+    explicit Window(const std::string& title, Vec2i position, Vec2u size, WindowFlag flags);
     virtual ~Window();
 
     virtual void init();

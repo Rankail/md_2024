@@ -5,9 +5,9 @@
 #include "units/Color.h"
 #include "units/Brush.h"
 #include "vec.h"
-#include "visualize/render/RC.h"
-#include "visualize/render/buffer/VertexArray.h"
-#include "visualize/render/Shader.h"
+#include "atlas/render/RC.h"
+#include "atlas/render/buffer/VertexArray.h"
+#include "atlas/render/Shader.h"
 
 class DC;
 

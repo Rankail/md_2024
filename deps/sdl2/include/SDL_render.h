@@ -73,7 +73,7 @@ typedef enum
 } SDL_RendererFlags;
 
 /**
- * Information on the capabilities of a visualize driver or context.
+ * Information on the capabilities of a atlas driver or context.
  */
 typedef struct SDL_RendererInfo
 {
@@ -112,7 +112,7 @@ typedef enum
 {
     SDL_TEXTUREACCESS_STATIC,    /**< Changes rarely, not lockable */
     SDL_TEXTUREACCESS_STREAMING, /**< Changes frequently, lockable */
-    SDL_TEXTUREACCESS_TARGET     /**< Texture can be used as a visualize target */
+    SDL_TEXTUREACCESS_TARGET     /**< Texture can be used as a atlas target */
 } SDL_TextureAccess;
 
 /**
@@ -152,11 +152,11 @@ typedef struct SDL_Texture SDL_Texture;
 /**
  * Get the number of 2D rendering drivers available for the current display.
  *
- * A visualize driver is a set of code that handles rendering and texture
+ * A atlas driver is a set of code that handles rendering and texture
  * management on a particular display. Normally there is only one, but some
  * drivers may have several available with different capabilities.
  *
- * There may be none if SDL was compiled without visualize support.
+ * There may be none if SDL was compiled without atlas support.
  *
  * \returns a number >= 0 on success or a negative error code on failure; call
  *          SDL_GetError() for more information.
@@ -388,7 +388,7 @@ extern DECLSPEC int SDLCALL SDL_QueryTexture(SDL_Texture * texture,
                                              int *w, int *h);
 
 /**
- * Set an additional color value multiplied into visualize copy operations.
+ * Set an additional color value multiplied into atlas copy operations.
  *
  * When this texture is rendered, during the copy operation each source color
  * channel is modulated by the appropriate color value according to the
@@ -416,7 +416,7 @@ extern DECLSPEC int SDLCALL SDL_SetTextureColorMod(SDL_Texture * texture,
 
 
 /**
- * Get the additional color value multiplied into visualize copy operations.
+ * Get the additional color value multiplied into atlas copy operations.
  *
  * \param texture the texture to query
  * \param r a pointer filled in with the current red color value
@@ -435,7 +435,7 @@ extern DECLSPEC int SDLCALL SDL_GetTextureColorMod(SDL_Texture * texture,
                                                    Uint8 * b);
 
 /**
- * Set an additional alpha value multiplied into visualize copy operations.
+ * Set an additional alpha value multiplied into atlas copy operations.
  *
  * When this texture is rendered, during the copy operation the source alpha
  * value is modulated by this alpha value according to the following formula:
@@ -459,7 +459,7 @@ extern DECLSPEC int SDLCALL SDL_SetTextureAlphaMod(SDL_Texture * texture,
                                                    Uint8 alpha);
 
 /**
- * Get the additional alpha value multiplied into visualize copy operations.
+ * Get the additional alpha value multiplied into atlas copy operations.
  *
  * \param texture the texture to query
  * \param alpha a pointer filled in with the current alpha value
@@ -743,7 +743,7 @@ extern DECLSPEC int SDLCALL SDL_LockTextureToSurface(SDL_Texture *texture,
 extern DECLSPEC void SDLCALL SDL_UnlockTexture(SDL_Texture * texture);
 
 /**
- * Determine whether a renderer supports the use of visualize targets.
+ * Determine whether a renderer supports the use of atlas targets.
  *
  * \param renderer the renderer that will be checked
  * \returns SDL_TRUE if supported or SDL_FALSE if not.
@@ -759,15 +759,15 @@ extern DECLSPEC SDL_bool SDLCALL SDL_RenderTargetSupported(SDL_Renderer *rendere
  *
  * Before using this function, you should check the
  * `SDL_RENDERER_TARGETTEXTURE` bit in the flags of SDL_RendererInfo to see if
- * visualize targets are supported.
+ * atlas targets are supported.
  *
- * The default visualize target is the window for which the renderer was created.
- * To stop rendering to a texture and visualize to the window again, call this
+ * The default atlas target is the window for which the renderer was created.
+ * To stop rendering to a texture and atlas to the window again, call this
  * function with a NULL `texture`.
  *
  * \param renderer the rendering context
  * \param texture the targeted texture, which must be created with the
- *                `SDL_TEXTUREACCESS_TARGET` flag, or NULL to visualize to the
+ *                `SDL_TEXTUREACCESS_TARGET` flag, or NULL to atlas to the
  *                window instead of a texture.
  * \returns 0 on success or a negative error code on failure; call
  *          SDL_GetError() for more information.
@@ -780,13 +780,13 @@ extern DECLSPEC int SDLCALL SDL_SetRenderTarget(SDL_Renderer *renderer,
                                                 SDL_Texture *texture);
 
 /**
- * Get the current visualize target.
+ * Get the current atlas target.
  *
- * The default visualize target is the window for which the renderer was created,
+ * The default atlas target is the window for which the renderer was created,
  * and is reported a NULL here.
  *
  * \param renderer the rendering context
- * \returns the current visualize target or NULL for the default visualize target.
+ * \returns the current atlas target or NULL for the default atlas target.
  *
  * \since This function is available since SDL 2.0.0.
  *
@@ -826,7 +826,7 @@ extern DECLSPEC int SDLCALL SDL_RenderSetLogicalSize(SDL_Renderer * renderer, in
  * Get device independent resolution for rendering.
  *
  * This may return 0 for `w` and `h` if the SDL_Renderer has never had its
- * logical size set by SDL_RenderSetLogicalSize() and never had a visualize
+ * logical size set by SDL_RenderSetLogicalSize() and never had a atlas
  * target set.
  *
  * \param renderer a rendering context
@@ -996,7 +996,7 @@ extern DECLSPEC void SDLCALL SDL_RenderGetScale(SDL_Renderer * renderer,
  * Get logical coordinates of point in renderer when given real coordinates of
  * point in window.
  *
- * Logical coordinates will differ from real coordinates when visualize is scaled
+ * Logical coordinates will differ from real coordinates when atlas is scaled
  * and logical renderer size set
  *
  * \param renderer the renderer from which the logical coordinates should be
@@ -1019,7 +1019,7 @@ extern DECLSPEC void SDLCALL SDL_RenderWindowToLogical(SDL_Renderer * renderer,
                                                   
                                                   /**
  * Get real coordinates of point in window when given logical coordinates of point in renderer.
- * Logical coordinates will differ from real coordinates when visualize is scaled and logical renderer size set
+ * Logical coordinates will differ from real coordinates when atlas is scaled and logical renderer size set
  * 
  * \param renderer the renderer from which the window coordinates should be calculated
  * \param logicalX the logical x coordinate
@@ -1687,7 +1687,7 @@ extern DECLSPEC int SDLCALL SDL_RenderGeometryRaw(SDL_Renderer *renderer,
  *
  * \param renderer the rendering context
  * \param rect an SDL_Rect structure representing the area to read, or NULL
- *             for the entire visualize target
+ *             for the entire atlas target
  * \param format an SDL_PixelFormatEnum value of the desired format of the
  *               pixel data, or 0 to use the format of the rendering target
  * \param pixels a pointer to the pixel data to copy into
@@ -1773,11 +1773,11 @@ extern DECLSPEC void SDLCALL SDL_DestroyRenderer(SDL_Renderer * renderer);
  * are planning to call into OpenGL/Direct3D/Metal/whatever directly in
  * addition to using an SDL_Renderer.
  *
- * This is for a very-specific case: if you are using SDL's visualize API, you
+ * This is for a very-specific case: if you are using SDL's atlas API, you
  * asked for a specific renderer backend (OpenGL, Direct3D, etc), you set
  * SDL_HINT_RENDER_BATCHING to "1", and you plan to make OpenGL/D3D/whatever
- * calls in addition to SDL visualize API calls. If all of this applies, you
- * should call SDL_RenderFlush() between calls to SDL's visualize API and the
+ * calls in addition to SDL atlas API calls. If all of this applies, you
+ * should call SDL_RenderFlush() between calls to SDL's atlas API and the
  * low-level API you're using in cooperation.
  *
  * In all other cases, you can ignore this function. This is only here to get
@@ -1872,9 +1872,9 @@ extern DECLSPEC void *SDLCALL SDL_RenderGetMetalLayer(SDL_Renderer * renderer);
  * headers, but it can be safely cast to an `id<MTLRenderCommandEncoder>`.
  *
  * Note that as of SDL 2.0.18, this will return NULL if Metal refuses to give
- * SDL a drawable to visualize to, which might happen if the window is
+ * SDL a drawable to atlas to, which might happen if the window is
  * hidden/minimized/offscreen. This doesn't apply to command encoders for
- * visualize targets, just the window's backbacker. Check your return values!
+ * atlas targets, just the window's backbacker. Check your return values!
  *
  * \param renderer The renderer to query
  * \returns an `id<MTLRenderCommandEncoder>` on success, or NULL if the

@@ -124,7 +124,7 @@ void DC::drawRect(Rect rect, const Brush& brush) {
     drawCustom<RectRC>(rect, brush);
 }
 
-void DC::drawLine(Point p1, Point p2, const Brush &br, int lineWidth) {
+void DC::drawLine(Vec2f p1, Vec2f p2, const Brush &br, int lineWidth) {
     drawCustom<LineRC>(p1, p2, br, lineWidth);
 }
 
@@ -174,7 +174,7 @@ void DC::drawPolygon(const std::vector<Point> &points, const Brush &br) {
     drawCustom<PolygonRC>(points, br);
 }
 
-void DC::drawCircle(Point center, double radius, const Brush& brush) {
+void DC::drawCircle(Vec2d center, double radius, const Brush& brush) {
     drawCustom<CircleRC>(center, radius, brush);
 }
 

@@ -14,7 +14,7 @@ public:
 
     bool init(const Vec2u& size = {800, 600});
 
-    void render(const FullInputData& data);
+    void render(const FullGraphicData& data);
 };
 
 

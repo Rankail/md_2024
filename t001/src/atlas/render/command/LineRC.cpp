@@ -17,10 +17,10 @@ void LineRC::init(DC* dc) {
     lineShader = dc->getShader("line");
 }
 
-void LineRC::setData(Point point1, Point point2, const Brush& br, int lineWidth) {
+void LineRC::setData(Vec2f point1, Vec2f point2, const Brush& br, int lineWidth) {
     VertexData vertex[2] = {
-        VertexData({point1.x, point1.y}),
-        VertexData({point2.x, point2.y})
+        VertexData(point1),
+        VertexData(point2)
     };
     vao->getVertexBuffer()->setData(vertex, sizeof(vertex));
 

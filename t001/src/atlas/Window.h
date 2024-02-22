@@ -6,6 +6,7 @@
 
 #include "WindowFlag.h"
 #include "vec.h"
+#include "model.h"
 #include "atlas/render/DC.h"
 
 class Window {
@@ -23,7 +24,7 @@ public:
     virtual ~Window();
 
     virtual void init();
-    virtual void render();
+    virtual void render(const FullGraphicData& data);
 
     void close();
 

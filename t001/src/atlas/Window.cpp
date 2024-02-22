@@ -133,18 +133,33 @@ void Window::init() {
     dc->init();
 }
 
-void Window::render() {
-    SDL_GL_MakeCurrent(handle, context);
+void Window::render(const FullGraphicData& data) {
     glClearColor(0.94, 0.94, 0.94, 1.f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    dc->drawLine({0, 0}, {200, 200}, Brush::solid(Colors::AQUAMARINE), 2);
+    const Color colorPalette[] = {
+        Colors::ORANGE,
+        Colors::AQUAMARINE,
+        Colors::LIGHT_SEA_GREEN,
+        Colors::OLIVE,
+        Colors::PURPLE,
+        Colors::GRAY,
+        Colors::YELLOW,
+        Colors::RED
+    };
+    unsigned colorIdx = 0;
 
-    dc->drawCircle({75, 100}, 25, Brush::solid(Colors::AQUAMARINE));
-    dc->drawCircle({100, 100}, 50.0, Brush::linear(
-        Colors::BOOGER_GREEN.withAlpha(0.9),
-        Colors::INDIGO.withAlpha(0.1),
-        {0, 0.5}, {1, 0.5},
-            0.9)
-    );
+    for (const auto& circle : data.circles) {
+        dc->drawCircle(circle.originalPosition, circle.radius,
+            Brush::solid(colorPalette[colorIdx].withAlpha(0.3)));
+        colorIdx = (colorIdx + 1) % 8;
+    }
+
+    for (const auto& line : data.lines) {
+        dc->drawLine(
+            line.line.first.toFloat(),
+            line.line.second.toFloat(),
+            Brush::solid((line.touching) ? Colors::GREEN : Colors::RED),
+            1);
+    }
 }

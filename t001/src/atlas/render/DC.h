@@ -70,7 +70,7 @@ public:
 
     void drawRect(Rect rect, const Brush& brush);
 
-    void drawLine(Point p1, Point p2, const Brush &br, int lineWidth);
+    void drawLine(Vec2f p1, Vec2f p2, const Brush &br, int lineWidth);
     void drawPolyLine(const std::vector<Point>& points, const Brush& br, int lineWidth);
     void drawBezier(Point p1, Point p2, Point p3, Point p4, const Brush &br, int lineWidth);
 
@@ -85,7 +85,7 @@ public:
     void drawText(Point pos, const std::string& text, const std::string& fontFamily, unsigned fontSize, unsigned wrapLength = 0);
     void drawText(Point pos, const std::string& text, Font* font, const Brush& col, unsigned wrapLength = 0);
 
-    void drawCircle(Point center, double radius, const Brush& brush);
+    void drawCircle(Vec2d center, double radius, const Brush& brush);
 };
 
 #endif

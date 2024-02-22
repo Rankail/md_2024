@@ -43,7 +43,7 @@ bool Visualizer::init(const Vec2u& size) {
     return true;
 }
 
-void Visualizer::render(const FullInputData& data) {
+void Visualizer::render(const FullGraphicData& data) {
     bool quit = false;
     while (!quit) {
         SDL_Event event;
@@ -55,7 +55,7 @@ void Visualizer::render(const FullInputData& data) {
             }
         }
         SDL_GL_MakeCurrent(window->getHandle(), window->getContext());
-        window->render();
+        window->render(data);
         SDL_GL_SwapWindow(window->getHandle());
     }
 }

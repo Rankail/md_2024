@@ -18,14 +18,4 @@ struct FullInputData {
     std::vector<std::pair<unsigned, unsigned>> edges;
 };
 
-struct GraphicEdge {
-    bool touching = false;
-    std::pair<Vec2d, Vec2d> line;
-};
-
-struct FullGraphicData {
-    std::vector<Node> circles;
-    std::vector<GraphicEdge> lines;
-};
-
 #endif //MD_2024_MODEL_H

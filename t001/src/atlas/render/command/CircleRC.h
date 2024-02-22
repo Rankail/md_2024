@@ -26,7 +26,7 @@ public:
     CircleRC() = default;
     ~CircleRC() override;
 
-    void setData(Point center, double radius, const Brush& br);
+    void setData(Vec2d center, double radius, const Brush& br);
     void setShaderData();
 
     void init(DC* dc) override;

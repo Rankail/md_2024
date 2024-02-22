@@ -21,9 +21,9 @@ void CircleRC::init(DC *dc) {
     circleShader = dc->getShader("circle");
 }
 
-void CircleRC::setData(Point center, double radius, const Brush& br) {
-    Vec2f point1{center.x - radius, center.y - radius};
-    Vec2f point2{center.x + radius, center.y + radius};
+void CircleRC::setData(Vec2d center, double radius, const Brush& br) {
+    Vec2f point1{center.x() - radius, center.y() - radius};
+    Vec2f point2{center.x() + radius, center.y() + radius};
 
     VertexData vertex[4] = {
         VertexData({point1.x(), point1.y()}, {0.f, 0.f}),

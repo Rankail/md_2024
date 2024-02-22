@@ -24,7 +24,7 @@ public:
     LineRC() = default;
     ~LineRC() override;
 
-    void setData(Point point1, Point point2, const Brush& br, int lineWidth = 1);
+    void setData(Vec2f point1, Vec2f point2, const Brush& br, int lineWidth = 1);
     void setShaderData();
 
     void init(DC* dc) override;

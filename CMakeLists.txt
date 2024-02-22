@@ -48,4 +48,5 @@ if (OPTS_LINK_STDLIB)
     add_compile_options(-static-libgcc -static-libstdc++)
 endif ()
 
+add_subdirectory(pointCalc)
 add_subdirectory(t001)

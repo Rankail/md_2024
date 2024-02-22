@@ -4,8 +4,8 @@
 #include <filesystem>
 #include <numbers>
 
-#include "../Logger.h"
-#include "../utils.h"
+#include "Logger.h"
+#include "utils.h"
 
 FullInputData* InputReader::readFromFile(const std::string& path) {
     std::ifstream file{path, std::ios::in};
@@ -60,7 +60,7 @@ Node* InputReader::readNodeLine(const std::string& line, unsigned lineNum) {
     unsigned index{lineNum};
     std::string name{data[0]};
     double weight{std::stod(data[1])};
-    weight = std::sqrt(weight/ std::numbers::pi);
+    weight = std::sqrt(weight / std::numbers::pi);
     Vec2d originalPos{
         std::stod(data[2]),
         std::stod(data[3])

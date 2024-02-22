@@ -72,7 +72,7 @@ Node* InputReader::readNodeLine(const std::string& line, unsigned lineNum) {
     return node;
 }
 
-std::pair<unsigned, unsigned> InputReader::readEdgeLine(const std::string& line,
+uPair InputReader::readEdgeLine(const std::string& line,
     const std::unordered_map<std::string, unsigned int>& nameIdxMapping) {
 
     const auto& data = splitAt(line, " \t");
@@ -85,7 +85,7 @@ std::pair<unsigned, unsigned> InputReader::readEdgeLine(const std::string& line,
     auto name2 = data[1];
     auto it1 = nameIdxMapping.find(name1);
     auto it2 = nameIdxMapping.find(name2);
-    auto pair = std::pair<unsigned, unsigned>{-1, -1};
+    auto pair = uPair{-1, -1};
     if (it1 == nameIdxMapping.end()) {
         TET_ERROR("Incorrect node-name '{}'.", name1);
     } else {

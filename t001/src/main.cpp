@@ -13,10 +13,10 @@ FullGraphicData inputDataToGraphicData(const FullInputData& inputData, const Vec
     auto maxY = std::numeric_limits<double>::min();
 
     for (const auto& circle : inputData.nodes) {
-        minX = std::min(minX, circle->originalPosition.x() - circle->radius);
-        minY = std::min(minY, circle->originalPosition.y() - circle->radius);
-        maxX = std::max(maxX, circle->originalPosition.x() + circle->radius);
-        maxY = std::max(maxY, circle->originalPosition.y() + circle->radius);
+        minX = std::min(minX, circle->position.x() - circle->radius);
+        minY = std::min(minY, circle->position.y() - circle->radius);
+        maxX = std::max(maxX, circle->position.x() + circle->radius);
+        maxY = std::max(maxY, circle->position.y() + circle->radius);
     }
     Vec2d positionOffset = Vec2d(minX, maxY);
     double scaleFactor = std::min(1 / (maxX - minX) * targetSize.x(), 1 / (maxY - minY) * targetSize.y());
@@ -24,9 +24,9 @@ FullGraphicData inputDataToGraphicData(const FullInputData& inputData, const Vec
     auto graphicData = FullGraphicData();
     for (const auto& circle : inputData.nodes) {
         auto newCircle = *circle;
-        newCircle.originalPosition -= positionOffset;
-        newCircle.originalPosition.x() *= scaleFactor;
-        newCircle.originalPosition.y() *= -scaleFactor;
+        newCircle.position -= positionOffset;
+        newCircle.position.x() *= scaleFactor;
+        newCircle.position.y() *= -scaleFactor;
         newCircle.radius *= scaleFactor;
         graphicData.circles.emplace_back(newCircle);
     }
@@ -35,7 +35,7 @@ FullGraphicData inputDataToGraphicData(const FullInputData& inputData, const Vec
         bool touching = false;
         const auto& node1 = graphicData.circles[idx1];
         const auto& node2 = graphicData.circles[idx2];
-        const auto diff = (node1.originalPosition - node2.originalPosition).abs();
+        const auto diff = (node1.position - node2.position).abs();
         const auto a2b2 = diff.x() * diff.x() + diff.y() * diff.y();
         const auto c2 = std::pow(node1.radius + node2.radius, 2.);
         if (a2b2 <= c2) {
@@ -43,7 +43,7 @@ FullGraphicData inputDataToGraphicData(const FullInputData& inputData, const Vec
         }
         auto edge = GraphicEdge();
         edge.touching = touching;
-        edge.line = std::make_pair(node1.originalPosition, node2.originalPosition);
+        edge.line = std::make_pair(node1.position, node2.position);
         graphicData.lines.emplace_back(edge);
     }
     return graphicData;
@@ -56,11 +56,14 @@ std::string selectFileFromDir(const std::string& directoryPath) {
 
     std::vector<std::string> files{};
     for (const auto& file : std::filesystem::directory_iterator(directoryPath)) {
+        const std::string path = file.path().generic_string();
         if (!file.is_regular_file()) {
-            TET_WARN("Special file detected '{}'", file.path().generic_string());
+            TET_WARN("Special file detected '{}'", path);
             continue;
         }
-        files.emplace_back(file.path().generic_string().substr(directoryPath.size()+1));
+
+        auto lastSlash = path.find_last_of("/\\");
+        files.emplace_back(path.substr((lastSlash == std::string::npos) ? 0 : lastSlash+1));
     }
 
     if (files.empty()) {
@@ -99,7 +102,7 @@ std::string selectFileFromDir(const std::string& directoryPath) {
 int main(int argc, char** argv) {
     Logger::init();
 
-    const std::string inputFilePath = selectFileFromDir("input_files");
+    const std::string inputFilePath = selectFileFromDir(MD_INPUT_DIR);
     std::cout << inputFilePath << std::endl;
 
     auto inputData = InputReader::readFromFile(inputFilePath);

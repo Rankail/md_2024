@@ -150,7 +150,7 @@ void Window::render(const FullGraphicData& data) {
     unsigned colorIdx = 0;
 
     for (const auto& circle : data.circles) {
-        dc->drawCircle(circle.originalPosition, circle.radius,
+        dc->drawCircle(circle.position, circle.radius,
             Brush::solid(colorPalette[colorIdx].withAlpha(0.3)));
         colorIdx = (colorIdx + 1) % 8;
     }

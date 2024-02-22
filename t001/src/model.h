@@ -10,12 +10,12 @@ struct Node {
     unsigned index;
     std::string name;
     double radius;
-    Vec2d originalPosition;
+    Vec2d position;
 };
 
 struct FullInputData {
     std::vector<Node*> nodes;
-    std::vector<std::pair<unsigned, unsigned>> edges;
+    std::vector<uPair> edges;
 };
 
 struct GraphicEdge {

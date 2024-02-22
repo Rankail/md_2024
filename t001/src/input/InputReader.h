@@ -11,7 +11,7 @@ public:
 
 private:
     static Node* readNodeLine(const std::string& line, unsigned lineNum);
-    static std::pair<unsigned, unsigned> readEdgeLine(const std::string& line, const std::unordered_map<std::string, unsigned>& nameIdxMapping);
+    static uPair readEdgeLine(const std::string& line, const std::unordered_map<std::string, unsigned>& nameIdxMapping);
 };
 
 

@@ -8,6 +8,7 @@ typedef unsigned int uint;
 typedef unsigned short ushort;
 typedef unsigned long long ulong;
 typedef unsigned char byte;
+typedef std::pair<unsigned, unsigned> uPair;
 
 typedef const char *cstr;
 

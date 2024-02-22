@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "vec.h"
+#include "utils.h"
 
 struct Node {
     unsigned index;

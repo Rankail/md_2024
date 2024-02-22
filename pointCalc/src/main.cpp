@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <unordered_set>
 #include <ranges>
+#include <spdlog/stopwatch.h>
 
 #include "InputReader.h"
 #include "OutputReader.h"
@@ -68,8 +69,12 @@ int main(int argc, char* argv[]) {
     auto lastSlash = inputFilePath.find_last_of("/\\");
     const auto& filename = inputFilePath.substr(lastSlash+1);
 
+    spdlog::stopwatch sw;
+
     auto inputData = InputReader::readFromFile(inputFilePath);
+    TET_TRACE("Finished parsing input at {}", sw);
     auto outputData = *OutputReader::readFromFile(MD_OUTPUT_DIR + filename + ".out");
+    TET_TRACE("Finished parsing output at {}", sw);
 
     auto edges = inputData->edges;
     auto edgesFilteredView = edges | std::ranges::views::filter([](const uPair& p) {
@@ -124,6 +129,8 @@ int main(int argc, char* argv[]) {
 
     const auto score = 1000.0 * (outputData.size() + edges.size()) / (1 + overlapFactor + distanceFactor + angleFactor);
     const auto scoreRounded = (int)(score + 0.5);
+
+    TET_TRACE("Finished score calculation at {}", sw.elapsed().count());
 
     std::cout   << "Max overlap: " << maxOverlap << std::endl
                 << "Max distance: " << maxDistance << std::endl

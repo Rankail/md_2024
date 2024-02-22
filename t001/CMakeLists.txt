@@ -61,8 +61,8 @@ add_dependency(t001 SOURCE glad)
 add_custom_target(initTargetDir ALL
         COMMAND ${CMAKE_COMMAND} -E copy_directory  "${T001_RSC_DIR}"
             "${PROJECT_ARTEFACT_DIR}/${target}/t001/${CMAKE_BUILD_TYPE}/rsc"
-        COMMAND ${CMAKE_COMMAND} -E copy_directory  "${CMAKE_SOURCE_DIR}/../tetris-for-the-win/input_files"
-            "${PROJECT_ARTEFACT_DIR}/${target}/t001/${CMAKE_BUILD_TYPE}/input_files"
+        #COMMAND ${CMAKE_COMMAND} -E copy_directory  "${CMAKE_SOURCE_DIR}/../tetris-for-the-win/input_files"
+        #    "${PROJECT_ARTEFACT_DIR}/${target}/t001/${CMAKE_BUILD_TYPE}/input_files"
         COMMAND ${CMAKE_COMMAND} -E make_directory "${PROJECT_ARTEFACT_DIR}/${target}/t001/${CMAKE_BUILD_TYPE}/output_files"
         COMMENT "Initializing target directory ...")
 

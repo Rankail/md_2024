@@ -1,5 +1,6 @@
 #include <SDL.h>
 #include <filesystem>
+#include <spdlog/stopwatch.h>
 
 #include "Logger.h"
 #include "input/InputReader.h"
@@ -49,7 +50,7 @@ FullGraphicData inputDataToGraphicData(const FullInputData& inputData, const Vec
     return graphicData;
 }
 
-std::string selectFileFromDir(const std::string& directoryPath) {
+std::string selectFileFromDir(const std::string& directoryPath, char preSelection = '\0') {
     if (!std::filesystem::is_directory(directoryPath)) {
         TET_CRITICAL("'{}' is not a directory", directoryPath);
     }
@@ -71,6 +72,16 @@ std::string selectFileFromDir(const std::string& directoryPath) {
     }
 
     const std::string selectionChars = "0123456789qwertzuiopasdfghjklyxcvbnm";
+
+    if (preSelection != '\0') {
+        auto idx = selectionChars.find(preSelection);
+        if (idx == std::string::npos || idx >= files.size()) {
+            TET_WARN("Invalid selection");
+        } else {
+            return directoryPath + "/" + files[idx];
+        }
+    }
+
     for (int i = 0; i < files.size(); i++) {
         std::cout << "[" << selectionChars[i] << "] " << files[i] << std::endl;
     }
@@ -102,14 +113,34 @@ std::string selectFileFromDir(const std::string& directoryPath) {
 int main(int argc, char** argv) {
     Logger::init();
 
-    const std::string inputFilePath = selectFileFromDir(MD_INPUT_DIR);
+    auto preSelected = '\0';
+    if (argc == 2) {
+        const auto arg1 = std::string(argv[1]);
+        if (arg1.size() == 1)
+            preSelected = arg1[0];
+    }
+
+    const std::string inputFilePath = selectFileFromDir(MD_INPUT_DIR, preSelected);
     std::cout << inputFilePath << std::endl;
 
+    auto lastSlash = inputFilePath.find_last_of("/\\");
+    const auto& inputFilename = inputFilePath.substr(lastSlash+1);
+
+    spdlog::stopwatch sw;
     auto inputData = InputReader::readFromFile(inputFilePath);
 
-    //OutputPrinter::printToFile("output_files/Area_Afro-Eurasia.txt", inputData->nodes);
+    TET_TRACE("Parsed input in {}", sw);
+    sw.reset();
+
+    OutputPrinter::printToFile(MD_OUTPUT_DIR + inputFilename + ".out", inputData->nodes);
+
+    TET_TRACE("Wrote output in {}", sw);
+    sw.reset();
 
     const auto graphicData = inputDataToGraphicData(*inputData);
+
+    TET_TRACE("Converted input to graphic in {}", sw);
+    sw.reset();
 
     auto visualizer = Visualizer();
     visualizer.init();

@@ -7,8 +7,10 @@ set(PROJECT_DEPENDENCY_DIR "${CMAKE_SOURCE_DIR}/deps")
 set(PROJECT_ARTEFACT_DIR  "${CMAKE_SOURCE_DIR}/bin")
 set(PROJECT_BINARY_DIR "${PROJECT_ARTEFACT_DIR}")
 
-set(MD_INPUT_DIR "${CMAKE_SOURCE_DIR}/../tetris-for-the-win/input_files/")
-set(MD_OUTPUT_DIR "${CMAKE_SOURCE_DIR}/../tetris-for-the-win/result_files/")
+set(MD_DEPENDENCY_DIR "${CMAKE_SOURCE_DIR}/deps")
+set(MD_UTILS_DIR "${CMAKE_SOURCE_DIR}/utils/include")
+set(MD_INPUT_DIR "${CMAKE_SOURCE_DIR}/../tetris-for-the-win/input_files")
+set(MD_OUTPUT_DIR "${CMAKE_SOURCE_DIR}/../tetris-for-the-win/result_files")
 
 add_compile_definitions(MD_INPUT_DIR="${MD_INPUT_DIR}" MD_OUTPUT_DIR="${MD_OUTPUT_DIR}")
 
@@ -53,5 +55,12 @@ if (OPTS_LINK_STDLIB)
     add_compile_options(-static-libgcc -static-libstdc++)
 endif ()
 
+if (CMAKE_BUILD_TYPE STREQUAL "Release")
+    add_definitions(-DNDEBUG)
+elseif (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_definitions(-DDEBUG)
+endif()
+
+add_subdirectory(utils)
 add_subdirectory(pointCalc)
-add_subdirectory(t001)
+add_subdirectory(visualizer)

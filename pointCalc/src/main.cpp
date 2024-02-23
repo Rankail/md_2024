@@ -1,64 +1,12 @@
 #include <iostream>
 #include <vector>
 #include <filesystem>
-#include <unordered_set>
 #include <ranges>
-#include <spdlog/stopwatch.h>
 
-#include "InputReader.h"
-#include "OutputReader.h"
-#include "Logger.h"
-#include "utils.h"
-
-std::string selectFileFromDir(const std::string& directoryPath) {
-    if (!std::filesystem::is_directory(directoryPath)) {
-        TET_CRITICAL("'{}' is not a directory", directoryPath);
-    }
-
-    std::vector<std::string> files{};
-    for (const auto& file : std::filesystem::directory_iterator(directoryPath)) {
-        const std::string path = file.path().generic_string();
-        if (!file.is_regular_file()) {
-            TET_WARN("Special file detected '{}'", path);
-            continue;
-        }
-
-        auto lastSlash = path.find_last_of("/\\");
-        files.emplace_back(path.substr((lastSlash == std::string::npos) ? 0 : lastSlash+1));
-    }
-
-    if (files.empty()) {
-        TET_CRITICAL("No files to select!");
-    }
-
-    const std::string selectionChars = "0123456789qwertzuiopasdfghjklyxcvbnm";
-    for (int i = 0; i < files.size(); i++) {
-        std::cout << "[" << selectionChars[i] << "] " << files[i] << std::endl;
-    }
-
-    std::string line;
-    while (true) {
-        std::getline(std::cin, line);
-        if (std::cin.bad() || std::cin.fail()) {
-            TET_CRITICAL("Input was interrupted");
-            std::cin.clear();
-            continue;
-        }
-
-        if (line.size() != 1) {
-            TET_WARN("Expected exactly one character", line.size());
-            continue;
-        }
-
-        auto idx = selectionChars.find(line);
-        if (idx == std::string::npos || idx >= files.size()) {
-            TET_WARN("Invalid selection");
-            continue;
-        }
-
-        return directoryPath + "/" + files[idx];
-    }
-}
+#include <utils/log/Logger.h>
+#include <utils/utils.h>
+#include <utils/reader/InputReader.h>
+#include <utils/reader/OutputReader.h>
 
 int main(int argc, char* argv[]) {
     Logger::init();
@@ -72,8 +20,8 @@ int main(int argc, char* argv[]) {
     spdlog::stopwatch sw;
 
     auto inputData = InputReader::readFromFile(inputFilePath);
-    TET_TRACE("Finished parsing input at {}", sw);
-    auto outputData = *OutputReader::readFromFile(MD_OUTPUT_DIR + filename + ".out");
+    TET_TRACE("Finished parsing read at {}", sw);
+    auto outputData = *OutputReader::readFromFile(std::string(MD_OUTPUT_DIR) + "/" + filename + ".out");
     TET_TRACE("Finished parsing output at {}", sw);
 
     auto edges = inputData->edges;

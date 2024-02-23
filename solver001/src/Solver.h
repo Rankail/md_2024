@@ -6,6 +6,7 @@
 class Solver {
 private:
     std::vector<Node> nodes;
+    std::vector<Node> original;
     std::vector<std::vector<bool>> edges;
 
 public:

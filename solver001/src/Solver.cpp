@@ -4,6 +4,7 @@
 
 bool Solver::init(const FullInputData* inputData) {
     for (const Node* node : inputData->nodes) {
+        original.emplace_back(*node);
         nodes.emplace_back(*node);
     }
 
@@ -37,6 +38,9 @@ void Solver::iteration() {
             const auto a2b2 = diff.x() * diff.x() + diff.y() * diff.y();
             const auto r12 = n1.radius + n2.radius;
             const auto c2 = r12 * r12;
+            if(edges[i][j]) {
+
+            }
             if (a2b2 < c2) {
                 const auto dist = std::sqrt(a2b2);
                 const auto force = (r12 - dist) / r12 * diff * 0.1;

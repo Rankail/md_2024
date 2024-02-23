@@ -2,59 +2,57 @@
 
 #include <algorithm>
 
+#include "model2.h"
+
 bool Solver::init(const FullInputData* inputData) {
     for (const Node* node : inputData->nodes) {
-        nodes.emplace_back(*node);
+        nodes.emplace_back(new GraphNode{
+            node->index,
+            node->radius,
+            node->position,
+            node->position
+        });
     }
 
-    edges = std::vector<std::vector<bool>>(nodes.size(), std::vector<bool>(nodes.size(), false));
-
     for (const auto [idx1, idx2] : inputData->edges) {
-        edges[idx1][idx2] = true;
-        edges[idx2][idx1] = true;
+        nodes[idx1]->neigbors.emplace_back(nodes[idx2]);
+        nodes[idx2]->neigbors.emplace_back(nodes[idx1]);
+    }
+
+    for (GraphNode* node : nodes) {
+        std::ranges::sort(node->neigbors, [&](const GraphNode* a, const GraphNode* b) {
+            return (node->orgPos - a->orgPos).angleTo(node->pos - a->pos)
+                < (node->orgPos - b->orgPos).angleTo(node->pos - b->pos);
+        });
     }
 
     return true;
 }
 
-void Solver::run(unsigned iterations) {
-    for (int i = 0; i < iterations; i++) {
-        iteration();
+void Solver::run() {
+    nodes[0]->visited = true;
+    place(nodes[0]);
+}
+
+void Solver::place(GraphNode *current) {
+    for (GraphNode* neigbor : current->neigbors) {
+        if (neigbor->visited) continue;
+
+        const auto len = (neigbor->orgPos - current->orgPos).norm();
+        const auto newDiff = (neigbor->orgPos - current->orgPos) * (neigbor->radius + current->radius) / len;
+        neigbor->pos = current->pos + newDiff;
+        neigbor->visited = true;
+        place(neigbor);
     }
 }
 
-void Solver::printResult() {
-
-}
-
-void Solver::iteration() {
-    auto forces = std::vector<Vec2d>(nodes.size(), {0.0, 0.0});
-    for (int i = 0; i < nodes.size() - 1; i++) {
-        const auto& n1 = nodes[i];
-        for (int j = i + 1; j < nodes.size(); j++) {
-            const auto& n2 = nodes[j];
-            const auto diff = n2.position - n1.position;
-            const auto a2b2 = diff.x() * diff.x() + diff.y() * diff.y();
-            const auto r12 = n1.radius + n2.radius;
-            const auto c2 = r12 * r12;
-            if (a2b2 < c2) {
-                const auto dist = std::sqrt(a2b2);
-                const auto force = (r12 - dist) / r12 * diff * 0.1;
-                forces[j] += force;
-                forces[i] -= force;
-                continue;
-            }
-            if (!edges[i][j]) continue;
-            if (a2b2 > c2) {
-                const auto dist = std::sqrt(a2b2);
-                const auto force = (dist - r12) / dist * diff * 0.1;
-                forces[j] -= force;
-                forces[i] += force;
-            }
-        }
+std::vector<Node> Solver::getNodes(const std::vector<Node*>& originalNodes) {
+    std::vector<Node> newNodes{};
+    for (GraphNode* node : nodes) {
+        auto newNode = *originalNodes[node->id];
+        newNode.position = node->pos;
+        newNodes.emplace_back(newNode);
     }
 
-    for (int i = 0; i < nodes.size(); i++) {
-        nodes[i].position += forces[i];
-    }
+    return newNodes;
 }

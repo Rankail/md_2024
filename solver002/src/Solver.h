@@ -3,19 +3,19 @@
 
 #include <utils/model.h>
 
+#include "model2.h"
+
 class Solver {
 private:
-    std::vector<Node> nodes;
-    std::vector<std::vector<bool>> edges;
+    std::vector<GraphNode*> nodes;
 
 public:
     bool init(const FullInputData* inputData);
-    void run(unsigned iterations = 500);
-    void printResult();
+    void run();
 
-    void iteration();
+    void place(GraphNode* node);
 
-    const std::vector<Node>& getNodes() const { return nodes; }
+    std::vector<Node> getNodes(const std::vector<Node*>& originalNodes);
 
 };
 

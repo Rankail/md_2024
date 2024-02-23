@@ -23,12 +23,12 @@ int main(int argc, char** argv) {
 
     Solver solver{};
     solver.init(inputData);
-    solver.run(100000);
+    solver.run();
 
-    TET_INFO("100k iterations in {}s", sw);
+    TET_INFO("Finished after {}s", sw);
     sw.reset();
 
-    auto nodes = solver.getNodes();
+    const auto nodes = solver.getNodes(inputData->nodes);
 
     OutputPrinter::printToFile(std::string(MD_OUTPUT_DIR) + "/" + filename + ".out", nodes);
 

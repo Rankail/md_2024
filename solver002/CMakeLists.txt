@@ -1,16 +1,16 @@
-project(solver001)
+project(solver002)
 
-set(SOLVER001_SRC_DIR "${CMAKE_SOURCE_DIR}/solver001/src")
+set(SOLVER002_SRC_DIR "${CMAKE_SOURCE_DIR}/solver002/src")
 
-add_executable(solver001
+add_executable(solver002
         src/main.cpp
         src/Solver.cpp
         src/output/OutputPrinter.cpp
 )
 
-set_target_output_dirs(solver001)
+set_target_output_dirs(solver002)
 
-target_include_directories(solver001 PRIVATE ${SOLVER001_SRC_DIR})
+target_include_directories(solver002 PRIVATE ${SOLVER002_SRC_DIR})
 
-target_link_libraries(solver001 utils)
-target_include_directories(solver001 PRIVATE ${MD_UTILS_DIR})
+target_link_libraries(solver002 utils)
+target_include_directories(solver002 PRIVATE ${MD_UTILS_DIR})

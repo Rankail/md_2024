@@ -22,6 +22,6 @@ constexpr int narrow(uint u) {
 
 std::vector<std::string> splitAt(const std::string& s, const std::string& delims);
 
-std::string selectFileFromDir(const std::string& directoryPath);
+std::string selectFileFromDir(const std::string& directoryPath, char preSelection = '\0');
 
 #endif //MD_2024_UTILS_H

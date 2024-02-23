@@ -3,7 +3,9 @@
 
 #include <utils/log/Logger.h>
 #include <utils/reader/InputReader.h>
+#include <utils/utils.h>
 #include "atlas/Visualizer.h"
+#include "utils/reader/OutputReader.h"
 
 FullGraphicData inputDataToGraphicData(const FullInputData& inputData, const Vec2d& targetSize = {800, 600}) {
     auto minX = std::numeric_limits<double>::max();
@@ -48,66 +50,6 @@ FullGraphicData inputDataToGraphicData(const FullInputData& inputData, const Vec
     return graphicData;
 }
 
-std::string selectFileFromDir(const std::string& directoryPath, char preSelection = '\0') {
-    if (!std::filesystem::is_directory(directoryPath)) {
-        TET_CRITICAL("'{}' is not a directory", directoryPath);
-    }
-
-    std::vector<std::string> files{};
-    for (const auto& file : std::filesystem::directory_iterator(directoryPath)) {
-        const std::string path = file.path().generic_string();
-        if (!file.is_regular_file()) {
-            TET_WARN("Special file detected '{}'", path);
-            continue;
-        }
-
-        auto lastSlash = path.find_last_of("/\\");
-        files.emplace_back(path.substr((lastSlash == std::string::npos) ? 0 : lastSlash+1));
-    }
-
-    if (files.empty()) {
-        TET_CRITICAL("No files to select!");
-    }
-
-    const std::string selectionChars = "0123456789qwertzuiopasdfghjklyxcvbnm";
-
-    if (preSelection != '\0') {
-        auto idx = selectionChars.find(preSelection);
-        if (idx == std::string::npos || idx >= files.size()) {
-            TET_WARN("Invalid selection");
-        } else {
-            return directoryPath + "/" + files[idx];
-        }
-    }
-
-    for (int i = 0; i < files.size(); i++) {
-        std::cout << "[" << selectionChars[i] << "] " << files[i] << std::endl;
-    }
-
-    std::string line;
-    while (true) {
-        std::getline(std::cin, line);
-        if (std::cin.bad() || std::cin.fail()) {
-            TET_CRITICAL("Input was interrupted");
-            std::cin.clear();
-            continue;
-        }
-
-        if (line.size() != 1) {
-            TET_WARN("Expected exactly one character", line.size());
-            continue;
-        }
-
-        auto idx = selectionChars.find(line);
-        if (idx == std::string::npos || idx >= files.size()) {
-            TET_WARN("Invalid selection");
-            continue;
-        }
-
-        return directoryPath + "/" + files[idx];
-    }
-}
-
 int main(int argc, char** argv) {
     Logger::init();
 
@@ -125,19 +67,16 @@ int main(int argc, char** argv) {
     const auto& inputFilename = inputFilePath.substr(lastSlash+1);
 
     spdlog::stopwatch sw;
+
     auto inputData = InputReader::readFromFile(inputFilePath);
+    inputData->nodes = *OutputReader::readFromFile(std::string(MD_OUTPUT_DIR) + "/" + inputFilename + ".out");
 
-    TET_TRACE("Parsed read in {}", sw);
-    sw.reset();
-
-    //OutputPrinter::printToFile(MD_OUTPUT_DIR + inputFilename + ".out", inputData->nodes);
-
-    TET_TRACE("Wrote output in {}", sw);
+    TET_TRACE("Parsed input and output in {}s", sw);
     sw.reset();
 
     const auto graphicData = inputDataToGraphicData(*inputData);
 
-    TET_TRACE("Converted read to graphic in {}", sw);
+    TET_TRACE("Converted data to graphic in {}s", sw);
     sw.reset();
 
     auto visualizer = Visualizer();

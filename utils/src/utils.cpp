@@ -22,7 +22,7 @@ std::vector<std::string> splitAt(const std::string& s, const std::string& delims
     return parts;
 }
 
-std::string selectFileFromDir(const std::string& directoryPath) {
+std::string selectFileFromDir(const std::string& directoryPath, char preSelection) {
     if (!std::filesystem::is_directory(directoryPath)) {
         TET_CRITICAL("'{}' is not a directory", directoryPath);
     }
@@ -44,6 +44,16 @@ std::string selectFileFromDir(const std::string& directoryPath) {
     }
 
     const std::string selectionChars = "0123456789qwertzuiopasdfghjklyxcvbnm";
+
+    if (preSelection != '\0') {
+        auto idx = selectionChars.find(preSelection);
+        if (idx == std::string::npos || idx >= files.size()) {
+            TET_WARN("Invalid selection");
+        } else {
+            return directoryPath + "/" + files[idx];
+        }
+    }
+
     for (int i = 0; i < files.size(); i++) {
         std::cout << "[" << selectionChars[i] << "] " << files[i] << std::endl;
     }

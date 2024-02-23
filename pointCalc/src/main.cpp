@@ -20,9 +20,10 @@ int main(int argc, char* argv[]) {
     spdlog::stopwatch sw;
 
     auto inputData = InputReader::readFromFile(inputFilePath);
-    TET_TRACE("Finished parsing read at {}", sw);
     auto outputData = *OutputReader::readFromFile(std::string(MD_OUTPUT_DIR) + "/" + filename + ".out");
-    TET_TRACE("Finished parsing output at {}", sw);
+
+    TET_TRACE("Parsed input and output in {}s", sw);
+    sw.reset();
 
     auto edges = inputData->edges;
     auto edgesFilteredView = edges | std::ranges::views::filter([](const uPair& p) {
@@ -78,7 +79,7 @@ int main(int argc, char* argv[]) {
     const auto score = 1000.0 * (outputData.size() + edges.size()) / (1 + overlapFactor + distanceFactor + angleFactor);
     const auto scoreRounded = (int)(score + 0.5);
 
-    TET_TRACE("Finished score calculation at {}", sw.elapsed().count());
+    TET_TRACE("Calculated score in {}s", sw.elapsed().count());
 
     std::cout   << "Max overlap: " << maxOverlap << std::endl
                 << "Max distance: " << maxDistance << std::endl

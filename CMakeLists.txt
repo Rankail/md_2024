@@ -9,6 +9,8 @@ set(PROJECT_BINARY_DIR "${PROJECT_ARTEFACT_DIR}")
 
 set(MD_DEPENDENCY_DIR "${CMAKE_SOURCE_DIR}/deps")
 set(MD_UTILS_DIR "${CMAKE_SOURCE_DIR}/utils/include")
+set(MD_ATLAS_DIR "${CMAKE_SOURCE_DIR}/atlas/include")
+set(MD_ATLAS_RSC_DIR "${CMAKE_SOURCE_DIR}/atlas/rsc")
 set(MD_INPUT_DIR "${CMAKE_SOURCE_DIR}/../tetris-for-the-win/input_files")
 set(MD_OUTPUT_DIR "${CMAKE_SOURCE_DIR}/../tetris-for-the-win/result_files")
 
@@ -62,6 +64,7 @@ elseif (CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 
 add_subdirectory(utils)
+add_subdirectory(atlas)
 add_subdirectory(pointCalc)
 add_subdirectory(visualizer)
 add_subdirectory(solver001)

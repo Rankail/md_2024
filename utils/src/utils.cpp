@@ -1,7 +1,7 @@
 #include <filesystem>
 #include <iostream>
-#include "utils.h"
-#include "log/Logger.h"
+#include "utils/utils.h"
+#include "utils/log/Logger.h"
 
 std::vector<std::string> splitAt(const std::string& s, const std::string& delims) {
     std::vector<std::string> parts{};

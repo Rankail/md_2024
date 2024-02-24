@@ -1,0 +1,131 @@
+#ifndef MD_2024_COLOR_H
+#define MD_2024_COLOR_H
+
+#include "SDL.h"
+#include "utils/utils.h"
+
+#include <cmath>
+#include "utils/math/vec.h"
+
+#define DECLARE_COLOR(name, r, g, b) constexpr Color name = {r,g,b};
+#define DECLARE_COLOR_BYTE(name, r, g, b) DECLARE_COLOR(name, r / 255.f, g / 255.f, b / 255.f)
+#define DECLARE_COLOR_ALIAS(name, alias) constexpr Color alias = name;
+
+struct Color {
+    float r;
+    float g;
+    float b;
+    float a = 1.f;
+
+    Vec4f toVec() const { return {r, g, b, a}; }
+    SDL_Color toSDLColor() const { return {(byte)(r * 255),(byte)(g * 255),(byte)(b * 255),(byte)(a * 255)}; }
+
+    Color withAlpha(float alpha) const {
+        return {r,g,b,alpha};
+    }
+
+    Color darken(float by) const {
+        if (by < 0.f) return {1,1,1};
+        if (by > 1.f) return {0,0,0};
+        return {
+            std::fmax(r - by, 0.f),
+            std::fmax(g - by, 0.f),
+            std::fmax(b - by, 0.f)
+        };
+    }
+
+    Color lighten(float by) const {
+        if (by < 0.f) return {0,0,0};
+        if (by > 1.f) return {1,1,1};
+
+        return {
+            std::fmax(r + by, 1.f),
+            std::fmax(g + by, 1.f),
+            std::fmax(b + by, 1.f)
+        };
+    }
+};
+
+namespace Colors {
+    DECLARE_COLOR(WHITE, 1,1,1)
+    DECLARE_COLOR(LIGHT_GRAY, 0.75, 0.75, 0.75)
+    DECLARE_COLOR(GRAY, 0.5, 0.5, 0.5)
+    DECLARE_COLOR(DARK_GRAY, 0.25, 0.25, 0.25)
+    DECLARE_COLOR(BLACK, 0,0,0)
+
+    DECLARE_COLOR(RED, 1,0,0)
+    DECLARE_COLOR(DARK_RED, 0.5,0,0)
+    DECLARE_COLOR(GREEN, 0,1,0)
+    DECLARE_COLOR(DARK_GREEN, 0,0.5,0)
+    DECLARE_COLOR(DARKEST_GREEN, 0,0.2,0)
+    DECLARE_COLOR(BLUE, 0,0,1)
+    DECLARE_COLOR(DARK_BLUE, 0,0,0.5)
+    DECLARE_COLOR(CYAN, 0,1,1)
+    DECLARE_COLOR(DARK_CYAN, 0,0.5,0.5)
+    DECLARE_COLOR(MAGENTA, 1,0,1)
+    DECLARE_COLOR(DARK_MAGENTA, 0.5,0,0.5)
+    DECLARE_COLOR(YELLOW, 1,1,0)
+    DECLARE_COLOR(DARK_YELLOW, 0.5,0.5,0)
+    DECLARE_COLOR_ALIAS(DARK_YELLOW, OLIVE)
+
+    // Extended colours:
+    DECLARE_COLOR_BYTE(FIREBRICK, 178, 34, 34)
+    DECLARE_COLOR_BYTE(CRIMSON, 220, 20, 60)
+    DECLARE_COLOR_BYTE(INDIAN_RED, 205, 92, 92)
+    DECLARE_COLOR_BYTE(CORAL, 240, 128, 128)
+    DECLARE_COLOR_BYTE(ORANGE_RED, 255, 69, 0)
+    DECLARE_COLOR_BYTE(TOMATO, 255, 99, 71)
+    DECLARE_COLOR_BYTE(ORANGE, 255, 140, 0);
+    DECLARE_COLOR_BYTE(LIGHT_ORANGE, 255,165,0);
+
+    DECLARE_COLOR_BYTE(GOLD, 255,215,0)
+    DECLARE_COLOR_BYTE(GOLDENROD, 218,165,32)
+    DECLARE_COLOR_BYTE(LIGHT_YELLOW, 255,255,224);
+
+    DECLARE_COLOR_BYTE(BROWN, 139,89,19)
+    DECLARE_COLOR_BYTE(SIENNA, 160,82,45);
+    DECLARE_COLOR_BYTE(TAN, 210,180,180);
+    DECLARE_COLOR_BYTE(BURLYWOOD,222,184,135);
+    DECLARE_COLOR_BYTE(WHEAT, 245,222,179);
+
+    DECLARE_COLOR_BYTE(INDIGO, 75,0,130)
+    DECLARE_COLOR_BYTE(PURPLE, 128,0,128)
+    DECLARE_COLOR_BYTE(DARK_VIOLET, 148,0,211);
+    DECLARE_COLOR_BYTE(SLATE_BLUE, 106,90,205)
+    DECLARE_COLOR_BYTE(MEDIUM_SLATE_BLUE, 123,104,238)
+    DECLARE_COLOR_BYTE(VIOLET, 238,130,238);
+
+    DECLARE_COLOR_BYTE(MIDNIGHT_BLUE, 25,25,112);
+    DECLARE_COLOR_BYTE(NAVY, 0,0,128);
+    DECLARE_COLOR_BYTE(MEDIUM_BLUE, 0,0,205);
+    DECLARE_COLOR_BYTE(ROYAL_BLUE, 65,105,255);
+    DECLARE_COLOR_BYTE(STEEL_BLUE, 70,130,180);
+    DECLARE_COLOR_BYTE(DODGER_BLUE, 30,144,255);
+    DECLARE_COLOR_BYTE(DEEP_SKY_BLUE, 0,191,255);
+    DECLARE_COLOR_BYTE(CORNFLOWER_BLUE, 100,149,237);
+    DECLARE_COLOR_BYTE(SKY_BLUE, 135,206,250);
+    DECLARE_COLOR_BYTE(LIGHT_BLUE, 173,216,230);
+
+    DECLARE_COLOR_BYTE(TEAL, 0,128,128)
+    DECLARE_COLOR_BYTE(LIGHT_SEA_GREEN, 32,178,170);
+    DECLARE_COLOR_BYTE(DARK_TURQUOISE, 72,209,204);
+    DECLARE_COLOR_BYTE(TURQUOISE, 64,224,208)
+    DECLARE_COLOR_BYTE(AQUAMARINE, 127,255,212)
+    DECLARE_COLOR_BYTE(LIGHT_CYAN, 224,255,255)
+
+    DECLARE_COLOR_BYTE(DARK_OLIVE_GREEN, 85,107,47)
+    DECLARE_COLOR_BYTE(SEA_GREEN, 46,23,87)
+    DECLARE_COLOR_BYTE(BOOGER_GREEN, 107,142,35)
+    DECLARE_COLOR_BYTE(MEDIUM_SEA_GREEN, 60,179,113)
+    DECLARE_COLOR_BYTE(LIME_GREEN, 50,205,50);
+    DECLARE_COLOR_BYTE(LAWN_GREEN, 124,252,0)
+    DECLARE_COLOR_BYTE(LIGHT_GREEN, 144,238,144)
+
+    DECLARE_COLOR_BYTE(WHITE_SMOKE, 245,245,245)
+    DECLARE_COLOR_BYTE(GHOST_WHITE, 148,248,255)
+    DECLARE_COLOR_BYTE(SNOW_WHITE, 250,250,250)
+    DECLARE_COLOR_BYTE(IVORY, 255,255,240)
+}
+
+#endif
+

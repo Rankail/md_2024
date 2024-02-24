@@ -1,11 +1,11 @@
-#include <SDL.h>
 #include <filesystem>
 
 #include <utils/log/Logger.h>
 #include <utils/reader/InputReader.h>
 #include <utils/utils.h>
-#include "atlas/Visualizer.h"
+#include "Visualizer.h"
 #include "utils/reader/OutputReader.h"
+#include "utils/Arguments.h"
 
 FullGraphicData inputDataToGraphicData(const FullInputData& inputData, const Vec2d& targetSize = {800, 600}) {
     auto minX = std::numeric_limits<double>::max();
@@ -53,14 +53,13 @@ FullGraphicData inputDataToGraphicData(const FullInputData& inputData, const Vec
 int main(int argc, char** argv) {
     Logger::init();
 
-    auto preSelected = '\0';
-    if (argc == 2) {
-        const auto arg1 = std::string(argv[1]);
-        if (arg1.size() == 1)
-            preSelected = arg1[0];
+    Arguments args{argc, argv};
+    char filePreselection = '\0';
+    if (args.getArgCount() == 1) {
+        args >> filePreselection;
     }
 
-    const std::string inputFilePath = selectFileFromDir(MD_INPUT_DIR, preSelected);
+    const std::string inputFilePath = selectFileFromDir(MD_INPUT_DIR, filePreselection);
     std::cout << inputFilePath << std::endl;
 
     auto lastSlash = inputFilePath.find_last_of("/\\");
@@ -74,13 +73,13 @@ int main(int argc, char** argv) {
     TET_TRACE("Parsed input and output in {}s", sw);
     sw.reset();
 
-    const auto graphicData = inputDataToGraphicData(*inputData);
+    const auto graphicData = inputDataToGraphicData(*inputData, {1600, 900});
 
     TET_TRACE("Converted data to graphic in {}s", sw);
     sw.reset();
 
     auto visualizer = Visualizer();
-    visualizer.init();
+    visualizer.init({1600, 900});
     visualizer.render(graphicData);
 
     return 0;

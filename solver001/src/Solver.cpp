@@ -39,7 +39,13 @@ void Solver::iteration() {
             const auto r12 = n1.radius + n2.radius;
             const auto c2 = r12 * r12;
             if(edges[i][j]) {
-
+                Vec2d orgDiff = original[j].position - original[i].position;
+                const auto angle = diff.angleTo(orgDiff);
+                const auto rotateBy = -angle * 0.001;
+                const auto n2Rot = (diff / 2.).rotated2d(rotateBy);
+                const auto n2Trans = n2Rot - (diff / 2.);
+                forces[j] += n2Trans;
+                forces[i] -= n2Trans;
             }
             if (a2b2 < c2) {
                 const auto dist = std::sqrt(a2b2);

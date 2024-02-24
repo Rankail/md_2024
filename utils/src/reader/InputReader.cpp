@@ -1,11 +1,11 @@
-#include "reader/InputReader.h"
+#include "utils/reader/InputReader.h"
 
 #include <fstream>
 #include <filesystem>
 #include <numbers>
 
-#include "log/Logger.h"
-#include "utils.h"
+#include "utils/log/Logger.h"
+#include "utils/utils.h"
 
 FullInputData* InputReader::readFromFile(const std::string& path) {
     std::ifstream file{path, std::ios::in};

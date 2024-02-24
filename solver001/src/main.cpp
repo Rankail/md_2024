@@ -4,11 +4,18 @@
 #include <utils/reader/InputReader.h>
 #include "Solver.h"
 #include "output/OutputPrinter.h"
+#include "utils/Arguments.h"
 
 int main(int argc, char** argv) {
     Logger::init();
 
-    const std::string inputFilePath = selectFileFromDir(MD_INPUT_DIR);
+    Arguments args{argc, argv};
+    char filePreselection = '\0';
+    if (args.getArgCount() == 1) {
+        args >> filePreselection;
+    }
+
+    const std::string inputFilePath = selectFileFromDir(MD_INPUT_DIR, filePreselection);
     std::cout << inputFilePath << std::endl;
 
     auto lastSlash = inputFilePath.find_last_of("/\\");
@@ -23,9 +30,20 @@ int main(int argc, char** argv) {
 
     Solver solver{};
     solver.init(inputData);
-    solver.run(100000);
 
-    TET_INFO("100k iterations in {}s", sw);
+    unsigned iterations;
+    auto itStr = args.getNamed("i");
+    if (itStr.has_value()) {
+        iterations = std::stoul(itStr.value());
+    } else {
+        std::string line;
+        std::cin >> iterations;
+    }
+    
+    sw.reset();
+    solver.run(iterations);
+
+    TET_INFO("{} iterations in {}s", iterations, sw);
     sw.reset();
 
     auto nodes = solver.getNodes();

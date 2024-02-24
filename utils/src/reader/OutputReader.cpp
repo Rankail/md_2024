@@ -1,11 +1,11 @@
-#include "reader/OutputReader.h"
+#include "utils/reader/OutputReader.h"
 
 #include <unordered_map>
 #include <filesystem>
 #include <fstream>
 
-#include "log/Logger.h"
-#include "utils.h"
+#include "utils/log/Logger.h"
+#include "utils/utils.h"
 
 std::vector<Node *> *OutputReader::readFromFile(const std::string& path) {
     std::ifstream file{path, std::ios::in};

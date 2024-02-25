@@ -21,8 +21,8 @@ add_dependency(visualizer SHARED sdl2_ttf)
 add_dependency(visualizer STATIC sdl2main)
 add_dependency(visualizer SOURCE glad)
 
-add_custom_target(initTargetDir ALL
+add_custom_target(copyAtlasRscVisualizer ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory "${MD_ATLAS_RSC_DIR}"
         "${PROJECT_ARTEFACT_DIR}/${target}/visualizer/${CMAKE_BUILD_TYPE}/rsc")
 
-add_dependencies(visualizer initTargetDir)
+add_dependencies(visualizer copyAtlasRscVisualizer)

@@ -18,6 +18,8 @@ protected:
 
     DC* dc = nullptr;
 
+    Vec2u size;
+
 public:
     explicit Window(const std::string& title, const Vec2u& size = {800, 600});
     explicit Window(const std::string& title, Vec2i position, Vec2u size, WindowFlag flags);
@@ -33,6 +35,10 @@ public:
 
     SDL_Window*   getHandle()  const { return handle; }
     SDL_GLContext getContext() const { return context; }
+
+    void handleEvent(const SDL_Event& event);
+
+    Vec2u getSize() const { return size; }
 };
 
 

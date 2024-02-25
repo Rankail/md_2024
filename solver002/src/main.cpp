@@ -2,8 +2,8 @@
 #include <utils/utils.h>
 #include <utils/log/Logger.h>
 #include <utils/reader/InputReader.h>
+#include <utils/printer/OutputPrinter.h>
 #include "Solver.h"
-#include "output/OutputPrinter.h"
 
 int main(int argc, char** argv) {
     Logger::init();

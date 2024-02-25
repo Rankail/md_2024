@@ -1,3 +1,4 @@
+#include <format>
 #include "atlas/Window.h"
 
 #include "glad/glad.h"
@@ -17,6 +18,8 @@ Window::Window(const std::string& title, Vec2i position, Vec2u size, WindowFlag 
 
     handle = SDL_CreateWindow(title.c_str(), (int)position.x(), (int)position.y(),
         (int)size.x(), (int)size.y(), SDL_WINDOW_OPENGL | (unsigned)flags);
+
+    this->size = size;
 
     if (handle == nullptr) {
         TET_ERROR("Failed to create window. {}", SDL_GetError());
@@ -48,6 +51,8 @@ void Window::setCaption(const std::string &capt) {
 void Window::init() {
     int w, h;
     SDL_GetWindowSize(handle, &w, &h);
+
+    size = {w, h};
 
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
@@ -161,5 +166,15 @@ void Window::render(const FullGraphicData& data) {
             line.line.second.toFloat(),
             Brush::solid((line.touching) ? Colors::GREEN : Colors::RED),
             1);
+    }
+}
+
+void Window::handleEvent(const SDL_Event &event) {
+    if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
+        size = {event.window.data1, event.window.data2};
+
+        glViewport(0, 0, size.x(), size.y());
+
+        dc->setSize(size.x(), size.y());
     }
 }

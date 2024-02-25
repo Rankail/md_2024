@@ -65,7 +65,13 @@ endif()
 
 add_subdirectory(utils)
 add_subdirectory(atlas)
+
 add_subdirectory(pointCalc)
-add_subdirectory(visualizer)
+
 add_subdirectory(solver001)
 add_subdirectory(solver002)
+
+add_subdirectory(visualizer)
+add_subdirectory(visualizer001)
+add_subdirectory(visualizer003)
+add_subdirectory(visualizer004)

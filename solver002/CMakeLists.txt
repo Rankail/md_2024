@@ -5,7 +5,6 @@ set(SOLVER002_SRC_DIR "${CMAKE_SOURCE_DIR}/solver002/src")
 add_executable(solver002
         src/main.cpp
         src/Solver.cpp
-        src/output/OutputPrinter.cpp
 )
 
 set_target_output_dirs(solver002)

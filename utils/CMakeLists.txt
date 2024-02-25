@@ -10,6 +10,7 @@ add_library(utils
     src/log/Logger.cpp
     src/reader/InputReader.cpp
     src/reader/OutputReader.cpp
+    src/printer/OutputPrinter.cpp
 )
 
 target_include_directories(utils PRIVATE "${UTILS_INCLUDE_DIR}")

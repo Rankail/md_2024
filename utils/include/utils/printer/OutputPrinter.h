@@ -1,7 +1,7 @@
 #ifndef MD_2024_OUTPUTPRINTER_H
 #define MD_2024_OUTPUTPRINTER_H
 
-#include <utils/model.h>
+#include "utils/model.h"
 
 class OutputPrinter {
 public:

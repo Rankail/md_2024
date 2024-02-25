@@ -160,11 +160,16 @@ void Window::render(const FullGraphicData& data) {
         colorIdx = (colorIdx + 1) % 8;
     }
 
-    for (const auto& line : data.lines) {
+    for (int i = 0; i < data.lines.size(); i++) {
+        const auto& line = data.lines[i];
+        Color c = (line.touching) ? Colors::GREEN : Colors::RED;
+        if (data.worstAngle == i || data.worstDistance == i || data.worstOverlap == i) {
+            c = Colors::BLACK;
+        }
         dc->drawLine(
             line.line.first.toFloat(),
             line.line.second.toFloat(),
-            Brush::solid((line.touching) ? Colors::GREEN : Colors::RED),
+            Brush::solid(c),
             1);
     }
 }

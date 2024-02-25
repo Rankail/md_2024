@@ -52,7 +52,7 @@ void Visualizer::run(const std::string& inputFilePath) {
     const auto lastSlash = inputFilePath.find_last_of("/\\");
     inputFilename = inputFilePath.substr(lastSlash+1);
 
-    auto inputData = InputReader::readFromFile(inputFilePath);
+    inputData = InputReader::readFromFile(inputFilePath);
 
     edges = inputData->edges;
 
@@ -115,17 +115,43 @@ FullGraphicData Visualizer::getGraphicDataFromData(const std::vector<Node> &inpu
         graphicData.circles.emplace_back(newCircle);
     }
 
-    for (const auto& [idx1, idx2] : edges) {
+    double maxOverlap = 0.0;
+    double maxDistance = 0.0;
+    double maxAngle = 0.0;
+
+    for (int i = 0; i < edges.size(); i++) {
+        const auto [idx1, idx2] = edges[i];
         if (idx2 < idx1) continue;
         bool touching = false;
         const auto& node1 = graphicData.circles[idx1];
         const auto& node2 = graphicData.circles[idx2];
         const auto diff = (node1.position - node2.position).abs();
-        const auto a2b2 = diff.x() * diff.x() + diff.y() * diff.y();
-        const auto c2 = std::pow(node1.radius + node2.radius, 2.);
-        if (a2b2 <= c2) {
+        const auto dist = std::hypot(diff.x(), diff.y());
+        const auto r12 = node1.radius + node2.radius;
+        if (dist < r12) {
             touching = true;
+            const auto overlap = (r12 - dist) / r12;
+            if (overlap > maxOverlap) {
+                graphicData.worstOverlap = i;
+                maxOverlap = overlap;
+            }
+        } else {
+            const auto distance = (dist - r12) / r12;
+            if (distance > maxDistance) {
+                graphicData.worstDistance = i;
+                maxDistance = distance;
+            }
         }
+
+        const auto in1 = inputData->nodes[idx1];
+        const auto in2 = inputData->nodes[idx2];
+        const auto inDiff = in1->position - in2->position;
+        const auto angle = inDiff.smallestAngleTo(diff);
+        if (angle > maxAngle) {
+            graphicData.worstAngle = i;
+            maxAngle = (double)angle;
+        }
+
         auto edge = GraphicEdge();
         edge.touching = touching;
         edge.line = std::make_pair(node1.position, node2.position);
@@ -231,7 +257,7 @@ void Visualizer::switchTo(char c) {
     const auto lastSlash = inputFilePath.find_last_of("/\\");
     inputFilename = inputFilePath.substr(lastSlash+1);
 
-    auto inputData = InputReader::readFromFile(inputFilePath);
+    inputData = InputReader::readFromFile(inputFilePath);
 
     edges = inputData->edges;
 

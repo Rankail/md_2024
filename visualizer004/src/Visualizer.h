@@ -14,6 +14,7 @@ private:
     std::string inputFilename;
     std::vector<uPair> edges;
     FullGraphicData graphicData;
+    FullInputData* inputData;
 
 public:
     Visualizer() = default;

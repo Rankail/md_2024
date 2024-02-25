@@ -27,6 +27,9 @@ struct GraphicEdge {
 struct FullGraphicData {
     std::vector<Node> circles;
     std::vector<GraphicEdge> lines;
+    unsigned worstOverlap = -1;
+    unsigned worstDistance = -1;
+    unsigned worstAngle = -1;
 };
 
 #endif //MD_2024_MODEL_H

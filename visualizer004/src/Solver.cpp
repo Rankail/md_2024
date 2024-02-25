@@ -58,7 +58,7 @@ bool Solver::init(const FullInputData* inputData) {
         jointDef.Initialize(bodies[idx1], bodies[idx2], bodies[idx1]->GetLocalCenter(), bodies[idx2]->GetLocalCenter());
         jointDef.collideConnected = true;
         jointDef.length = original[idx1].radius + original[idx2].radius;
-        b2LinearStiffness(jointDef.stiffness, jointDef.damping, 4.f, 0.5f, bodies[idx1], bodies[idx2]);
+        b2LinearStiffness(jointDef.stiffness, jointDef.damping, 1.f, 0.99f, bodies[idx1], bodies[idx2]);
 
         b2DistanceJoint* joint = (b2DistanceJoint*)world->CreateJoint(&jointDef);
         joints.emplace_back(joint);
@@ -74,7 +74,7 @@ void Solver::run(unsigned iterations) {
 }
 
 void Solver::findSmallestNotColliding() {
-    double sumOverlap = 0.0;
+    double maxOverlap = 0.0;
 
     for (int i = 0; i < nodes.size()-1; i++) {
         const auto& n1 = nodes[i];
@@ -84,20 +84,21 @@ void Solver::findSmallestNotColliding() {
             const auto dist = std::hypot(diff.x(), diff.y());
             const auto r12 = n1.radius + n2.radius;
             const auto overlap = (r12 - dist) / dist;
-            sumOverlap += overlap;
+            maxOverlap = std::max(maxOverlap, overlap);
         }
     }
 
-    const auto avgOverlap = sumOverlap / (nodes.size() * (nodes.size() - 1) / 2.);
 
-    const auto factor = 1 + avgOverlap;
+    //const auto avgOverlap = sumOverlap / (nodes.size() * (nodes.size() - 1) / 2.);
+
+    const auto factor = 1 + maxOverlap;
     for (int i = 0; i < nodes.size(); i++) {
         nodes[i].position *= factor;
     }
 }
 
 void Solver::iteration() {
-    world->Step(1./1000., 6, 2);
+    world->Step(1./60., 6, 2);
     updateNodesWithSimulation();
 }
 

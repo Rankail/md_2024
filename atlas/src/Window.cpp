@@ -162,9 +162,15 @@ void Window::render(const FullGraphicData& data) {
 
     for (int i = 0; i < data.lines.size(); i++) {
         const auto& line = data.lines[i];
-        Color c = (line.touching) ? Colors::GREEN : Colors::RED;
-        if (data.worstAngle == i || data.worstDistance == i || data.worstOverlap == i) {
-            c = Colors::BLACK;
+        Color c = Colors::BLACK;
+        if (data.worstAngle == i) {
+            c.r = 1.f;
+        }
+        if (data.worstDistance == i) {
+            c.g = 1.f;
+        }
+        if (data.worstOverlap == i) {
+            c.b = 1.f;
         }
         dc->drawLine(
             line.line.first.toFloat(),

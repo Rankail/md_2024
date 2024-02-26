@@ -18,8 +18,9 @@ bool Solver::init(const FullInputData* inputData) {
 
     original.clear();
     nodes.clear();
-    bodies.clear();
     edges.clear();
+    bodies.clear();
+    joints.clear();
 
     b2Vec2 gravity(0.0f, 0.0f);
     world = new b2World(gravity);
@@ -55,10 +56,10 @@ bool Solver::init(const FullInputData* inputData) {
         edges[idx2][idx1] = true;
 
         b2DistanceJointDef jointDef;
-        jointDef.Initialize(bodies[idx1], bodies[idx2], bodies[idx1]->GetLocalCenter(), bodies[idx2]->GetLocalCenter());
+        jointDef.Initialize(bodies[idx1], bodies[idx2], bodies[idx1]->GetPosition(), bodies[idx2]->GetPosition());
         jointDef.collideConnected = true;
-        jointDef.length = original[idx1].radius + original[idx2].radius;
-        b2LinearStiffness(jointDef.stiffness, jointDef.damping, 1.f, 0.99f, bodies[idx1], bodies[idx2]);
+        jointDef.minLength = original[idx1].radius + original[idx2].radius;
+        b2LinearStiffness(jointDef.stiffness, jointDef.damping, 10.f, 1.f, bodies[idx1], bodies[idx2]);
 
         b2DistanceJoint* joint = (b2DistanceJoint*)world->CreateJoint(&jointDef);
         joints.emplace_back(joint);
@@ -74,6 +75,8 @@ void Solver::run(unsigned iterations) {
 }
 
 void Solver::findSmallestNotColliding() {
+    updateNodesWithSimulation();
+
     double maxOverlap = 0.0;
 
     for (int i = 0; i < nodes.size()-1; i++) {
@@ -95,6 +98,31 @@ void Solver::findSmallestNotColliding() {
     for (int i = 0; i < nodes.size(); i++) {
         nodes[i].position *= factor;
     }
+    updateSimulationWithNodes();
+}
+
+void Solver::rotateEdges() {
+    for (int i = 0; i < edges.size()-1; i++) {
+        for (int j = 0; j < edges.size(); j++) {
+            if (!edges[i][j]) continue;
+
+            const auto& o1 = original[i];
+            const auto& o2 = original[j];
+            const auto& n1 = nodes[i];
+            const auto& n2 = nodes[j];
+
+            const auto oDiff = o2.position - o1.position;
+            const auto nDiff = n2.position - n1.position;
+            auto angle = nDiff.angleTo(oDiff);
+            angle -= std::numbers::pi;
+            angle *= -1.;
+            const auto rotated = nDiff.rotated2d(angle * 0.01);
+            const auto transform = (rotated - nDiff) / 2.;
+            nodes[i].position -= transform;
+            nodes[j].position += transform;
+        }
+    }
+    updateSimulationWithNodes();
 }
 
 void Solver::iteration() {
@@ -154,5 +182,11 @@ void Solver::updateNodesWithSimulation() {
         const auto& body = bodies[i];
         const auto pos = body->GetPosition();
         nodes[i].position = {pos.x, pos.y};
+    }
+}
+
+void Solver::updateSimulationWithNodes() {
+    for (int i = 0; i < nodes.size(); i++) {
+        bodies[i]->SetTransform(b2Vec2(nodes[i].position.x(), nodes[i].position.y()), bodies[i]->GetAngle());
     }
 }

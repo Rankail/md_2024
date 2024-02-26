@@ -2,18 +2,12 @@
 #define MD_2024_SOLVER_H
 
 #include <utils/model.h>
-#include <box2d/box2d.h>
 
 class Solver {
 private:
-    std::vector<Node> original;
     std::vector<Node> nodes;
+    std::vector<Node> original;
     std::vector<std::vector<bool>> edges;
-
-    std::vector<b2Body*> bodies;
-    std::vector<b2DistanceJoint*> joints;
-
-    b2World* world;
 
 public:
     bool init(const FullInputData* inputData);
@@ -26,11 +20,6 @@ public:
     void printScore();
 
     void findSmallestNotColliding();
-
-    void updateNodesWithSimulation();
-    void updateSimulationWithNodes();
-
-    void rotateEdges();
 
 };
 

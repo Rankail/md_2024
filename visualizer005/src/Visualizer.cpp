@@ -187,10 +187,6 @@ void Visualizer::onKeyDown(const SDL_Event &event) {
             graphicData = getGraphicDataFromData(solver.getNodes(), edges);
             break;
         }
-        case SDL_SCANCODE_V: {
-            solver.rotateEdges();
-            graphicData = getGraphicDataFromData(solver.getNodes(), edges);
-        }
         default:
             break;
     }
@@ -247,11 +243,6 @@ void Visualizer::onKeyUp(const SDL_Event &event) {
         case SDL_SCANCODE_M: solver.printScore(); break;
         case SDL_SCANCODE_C: {
             solver.findSmallestNotColliding();
-            graphicData = getGraphicDataFromData(solver.getNodes(), edges);
-            break;
-        }
-        case SDL_SCANCODE_B: {
-            solver.rotateEdges();
             graphicData = getGraphicDataFromData(solver.getNodes(), edges);
             break;
         }

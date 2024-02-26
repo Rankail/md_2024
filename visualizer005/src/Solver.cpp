@@ -30,7 +30,7 @@ void Solver::run(unsigned iterations) {
 }
 
 void Solver::findSmallestNotColliding() {
-    double sumOverlap = 0.0;
+    std::vector<double> overlaps{};
 
     for (int i = 0; i < nodes.size()-1; i++) {
         const auto& n1 = nodes[i];
@@ -40,13 +40,14 @@ void Solver::findSmallestNotColliding() {
             const auto dist = std::hypot(diff.x(), diff.y());
             const auto r12 = n1.radius + n2.radius;
             const auto overlap = (r12 - dist) / dist;
-            sumOverlap += overlap;
+            overlaps.emplace_back(overlap);
         }
     }
 
-    const auto avgOverlap = sumOverlap / (nodes.size() * (nodes.size() - 1) / 2.);
+    std::sort(overlaps.begin(), overlaps.end());
+    const auto smallOverlap = overlaps[overlaps.size() * 99 / 100];
 
-    const auto factor = 1 + avgOverlap;
+    const auto factor = 1 + smallOverlap;
     for (int i = 0; i < nodes.size(); i++) {
         nodes[i].position *= factor;
     }

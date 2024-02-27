@@ -95,6 +95,9 @@ void Visualizer::handleEvents() {
 }
 
 void Visualizer::onKeyDown(const SDL_Event &event) {
+    TET_INFO("Physical {} key acting as {} key",
+        SDL_GetScancodeName(event.key.keysym.scancode),
+        SDL_GetKeyName(event.key.keysym.sym));
     switch(event.key.keysym.scancode) {
         case SDL_SCANCODE_A: {
             solver.run(1);
@@ -118,6 +121,36 @@ void Visualizer::onKeyDown(const SDL_Event &event) {
         }
         case SDL_SCANCODE_G: {
             solver.run(10000);
+            graphicData = solver.getGraphicData();
+            break;
+        }
+        case SDL_SCANCODE_UP: {
+            solver.moveOffset({0., -10.});
+            graphicData = solver.getGraphicData();
+            break;
+        }
+        case SDL_SCANCODE_DOWN: {
+            solver.moveOffset({0., 10.});
+            graphicData = solver.getGraphicData();
+            break;
+        }
+        case SDL_SCANCODE_LEFT: {
+            solver.moveOffset({-10., 0.});
+            graphicData = solver.getGraphicData();
+            break;
+        }
+        case SDL_SCANCODE_RIGHT: {
+            solver.moveOffset({10., 0.});
+            graphicData = solver.getGraphicData();
+            break;
+        }
+        case SDL_SCANCODE_RIGHTBRACKET: {
+            solver.decreaseZoom();
+            graphicData = solver.getGraphicData();
+            break;
+        }
+        case SDL_SCANCODE_BACKSLASH: {
+            solver.increaseZoom();
             graphicData = solver.getGraphicData();
             break;
         }
@@ -179,9 +212,12 @@ void Visualizer::onKeyUp(const SDL_Event &event) {
             graphicData = solver.getGraphicData();
             break;
         }
-        case SDL_SCANCODE_U: solver.toggleAngle(); break;
-        case SDL_SCANCODE_I: solver.toggleOverlap(); break;
-        case SDL_SCANCODE_O: solver.toggleDistance(); break;
+        case SDL_SCANCODE_U: solver.strengthenDistance(); break;
+        case SDL_SCANCODE_I: solver.strengthenOverlap(); break;
+        case SDL_SCANCODE_O: solver.strengthenAngle(); break;
+        case SDL_SCANCODE_J: solver.weakenDistance(); break;
+        case SDL_SCANCODE_K: solver.weakenOverlap(); break;
+        case SDL_SCANCODE_L: solver.weakenAngle(); break;
         case SDL_SCANCODE_X: {
             solver.bestRotation();
             graphicData = solver.getGraphicData();

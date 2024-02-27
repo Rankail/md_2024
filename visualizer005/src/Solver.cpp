@@ -9,6 +9,11 @@ bool Solver::init(const FullInputData* inputData) {
     nodes.clear();
     edges.clear();
 
+    overlapFactor = 0.1;
+    distanceFactor = 0.1;
+    angleFactor = 0.1;
+    TET_INFO("Dist {} / Over {} / Angle {}", distanceFactor, overlapFactor, angleFactor);
+
     edgeInputCount = inputData->edges.size();
 
     for (const Node* node : inputData->nodes) {
@@ -47,9 +52,10 @@ void Solver::calculateWorstAndMakeGraphic() {
     for (const auto& circle : nodes) {
         auto newCircle = circle;
         newCircle.position -= positionOffset;
-        newCircle.position.x() *= scaleFactor;
-        newCircle.position.y() *= scaleFactor;
-        newCircle.radius *= scaleFactor;
+        newCircle.position.x() *= scaleFactor * zoom;
+        newCircle.position.y() *= scaleFactor * zoom;
+        newCircle.radius *= scaleFactor * zoom;
+        newCircle.position -= offset;
         graphicData.circles.emplace_back(newCircle);
     }
 
@@ -134,9 +140,9 @@ void Solver::findSmallestNotColliding() {
 }
 
 void Solver::iteration() {
-    if (doAngle) updateWorstAngle();
-    if (doDistance) updateWorstDistance();
-    if (doOverlap) updateWorstOverlap();
+    updateWorstAngle();
+    updateWorstDistance();
+    updateWorstOverlap();
 }
 
 void Solver::setTargetSize(Vec2u targetSize) {
@@ -151,7 +157,7 @@ void Solver::updateWorstDistance() {
     const auto diff = n2.position - n1.position;
     const auto dist = std::hypot(diff.x(), diff.y());
     const auto r12 = n1.radius + n2.radius;
-    const auto transform = diff.normalized() * (dist - r12) * 0.1;
+    const auto transform = diff.normalized() * (dist - r12) * distanceFactor;
     n1.position += transform;
     n2.position -= transform;
 }
@@ -164,7 +170,7 @@ void Solver::updateWorstOverlap() {
     const auto diff = n2.position - n1.position;
     const auto dist = std::hypot(diff.x(), diff.y());
     const auto r12 = n1.radius + n2.radius;
-    const auto transform = diff.normalized() * (r12 - dist) * 0.1;
+    const auto transform = diff.normalized() * (r12 - dist) * overlapFactor;
     n1.position -= transform;
     n2.position += transform;
 }
@@ -183,34 +189,15 @@ void Solver::updateWorstAngle() {
     if (angle > std::numbers::pi) {
         angle = - (std::numbers::pi * 2.0 - angle);
     }
-    const auto transform = (nDiff.rotated2d(-angle * 0.1) - nDiff) / 2.;
+    const auto transform = (nDiff.rotated2d(-angle * angleFactor) - nDiff) / 2.;
     if (n1.radius > n2.radius) {
-        const auto factor = 1. / (n1.radius / n2.radius * 2.);
-        n1.position += transform * factor;
-        n2.position -= transform * (1. - factor);
+        n2.position -= transform;
     } else if (n2.radius > n1.radius) {
-        const auto factor = 1. / (n2.radius / n1.radius * 2.);
-        n1.position += transform * (1. - factor);
-        n2.position -= transform * factor;
+        n1.position += transform;
     } else {
         n1.position -= transform;
         n2.position += transform;
     }
-}
-
-void Solver::toggleOverlap() {
-    doOverlap = !doOverlap;
-    TET_INFO("Overlap is now {}", doOverlap);
-}
-
-void Solver::toggleDistance() {
-    doDistance = !doDistance;
-    TET_INFO("Distance is now {}", doDistance);
-}
-
-void Solver::toggleAngle() {
-    doAngle = !doAngle;
-    TET_INFO("Angle is now {}", doAngle);
 }
 
 void Solver::bestRotation() {
@@ -241,5 +228,50 @@ void Solver::bestRotation() {
         node.position.rotate2d(bestAngle);
     }
 
+    calculateWorstAndMakeGraphic();
+}
+
+void Solver::strengthenDistance() {
+    distanceFactor = std::min(0.2, distanceFactor * 1.5 + 0.0001);
+    TET_INFO("Dist {} / Over {} / Angle {}", distanceFactor, overlapFactor, angleFactor);
+}
+
+void Solver::weakenDistance() {
+    distanceFactor = std::max(0.0, distanceFactor * 0.6 - 0.0001);
+    TET_INFO("Dist {} / Over {} / Angle {}", distanceFactor, overlapFactor, angleFactor);
+}
+
+void Solver::strengthenOverlap() {
+    overlapFactor = std::min(0.2, overlapFactor * 1.5 + 0.0001);
+    TET_INFO("Dist {} / Over {} / Angle {}", distanceFactor, overlapFactor, angleFactor);
+}
+
+void Solver::weakenOverlap() {
+    overlapFactor = std::max(0.0, overlapFactor * 0.6 - 0.0001);
+    TET_INFO("Dist {} / Over {} / Angle {}", distanceFactor, overlapFactor, angleFactor);
+}
+
+void Solver::strengthenAngle() {
+    angleFactor = std::min(0.2, angleFactor * 1.5 + 0.0001);
+    TET_INFO("Dist {} / Over {} / Angle {}", distanceFactor, overlapFactor, angleFactor);
+}
+
+void Solver::weakenAngle() {
+    angleFactor = std::max(0.0, angleFactor * 0.6 - 0.0001);
+    TET_INFO("Dist {} / Over {} / Angle {}", distanceFactor, overlapFactor, angleFactor);
+}
+
+void Solver::increaseZoom() {
+    zoom *= 0.9;
+    calculateWorstAndMakeGraphic();
+}
+
+void Solver::decreaseZoom() {
+    zoom *= 1.1;
+    calculateWorstAndMakeGraphic();
+}
+
+void Solver::moveOffset(Vec2d move) {
+    offset += move * zoom;
     calculateWorstAndMakeGraphic();
 }

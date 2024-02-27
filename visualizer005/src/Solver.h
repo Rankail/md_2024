@@ -11,9 +11,11 @@ private:
     unsigned edgeInputCount = 0;
     FullGraphicData graphicData;
     Vec2u targetSize;
-    bool doOverlap = true;
-    bool doDistance = true;
-    bool doAngle = true;
+    double overlapFactor = 0.1;
+    double distanceFactor = 0.1;
+    double angleFactor = 0.1;
+    double zoom = 1.0;
+    Vec2d offset = {0.0, 0.0};
 
 public:
     bool init(const FullInputData* inputData);
@@ -34,11 +36,16 @@ public:
     const FullGraphicData& getGraphicData() const { return graphicData; }
 
     void setTargetSize(Vec2u targetSize);
+    void increaseZoom();
+    void decreaseZoom();
+    void moveOffset(Vec2d offset);
 
-    void toggleOverlap();
-    void toggleDistance();
-    void toggleAngle();
-
+    void strengthenDistance();
+    void weakenDistance();
+    void strengthenOverlap();
+    void weakenOverlap();
+    void strengthenAngle();
+    void weakenAngle();
 };
 
 

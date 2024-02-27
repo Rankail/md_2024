@@ -56,9 +56,11 @@ void Visualizer::run(const std::string& inputFilePath) {
 
     edges = inputData->edges;
 
+    solver.setTargetSize(window->getSize());
+
     solver.init(inputData);
 
-    graphicData = getGraphicDataFromData(solver.getNodes(), edges);
+    graphicData = solver.getGraphicData();
 
     while (!quit) {
         handleEvents();
@@ -78,6 +80,9 @@ void Visualizer::handleEvents() {
                 break;
             case SDL_WINDOWEVENT:
                 window->handleEvent(event);
+                if (event.window.type == SDL_WINDOWEVENT_RESIZED) {
+                    solver.setTargetSize({event.window.data1, event.window.data2});
+                }
                 break;
             case SDL_KEYDOWN:
                 onKeyDown(event);
@@ -89,102 +94,31 @@ void Visualizer::handleEvents() {
     }
 }
 
-FullGraphicData Visualizer::getGraphicDataFromData(const std::vector<Node> &inputNodes, const std::vector<uPair> &edges) {
-    auto minX = std::numeric_limits<double>::max();
-    auto minY = std::numeric_limits<double>::max();
-    auto maxX = std::numeric_limits<double>::min();
-    auto maxY = std::numeric_limits<double>::min();
-
-    for (const auto& circle : inputNodes) {
-        minX = std::min(minX, circle.position.x() - circle.radius);
-        minY = std::min(minY, circle.position.y() - circle.radius);
-        maxX = std::max(maxX, circle.position.x() + circle.radius);
-        maxY = std::max(maxY, circle.position.y() + circle.radius);
-    }
-    Vec2d positionOffset = Vec2d(minX, maxY);
-    Vec2u targetSize = window->getSize();
-    double scaleFactor = std::min(1 / (maxX - minX) * targetSize.x(), 1 / (maxY - minY) * targetSize.y());
-
-    auto graphicData = FullGraphicData();
-    for (const auto& circle : inputNodes) {
-        auto newCircle = circle;
-        newCircle.position -= positionOffset;
-        newCircle.position.x() *= scaleFactor;
-        newCircle.position.y() *= -scaleFactor;
-        newCircle.radius *= scaleFactor;
-        graphicData.circles.emplace_back(newCircle);
-    }
-
-    double maxOverlap = 0.0;
-    double maxDistance = 0.0;
-    double maxAngle = 0.0;
-
-    for (int i = 0; i < edges.size(); i++) {
-        const auto [idx1, idx2] = edges[i];
-        if (idx2 < idx1) continue;
-        bool touching = false;
-        const auto& node1 = graphicData.circles[idx1];
-        const auto& node2 = graphicData.circles[idx2];
-        const auto diff = (node1.position - node2.position).abs();
-        const auto dist = std::hypot(diff.x(), diff.y());
-        const auto r12 = node1.radius + node2.radius;
-        if (dist < r12) {
-            touching = true;
-            const auto overlap = (r12 - dist) / r12;
-            if (overlap > maxOverlap) {
-                graphicData.worstOverlap = i;
-                maxOverlap = overlap;
-            }
-        } else {
-            const auto distance = (dist - r12) / r12;
-            if (distance > maxDistance) {
-                graphicData.worstDistance = i;
-                maxDistance = distance;
-            }
-        }
-
-        const auto in1 = inputData->nodes[idx1];
-        const auto in2 = inputData->nodes[idx2];
-        const auto inDiff = in1->position - in2->position;
-        const auto angle = inDiff.smallestAngleTo(diff);
-        if (angle > maxAngle) {
-            graphicData.worstAngle = i;
-            maxAngle = (double)angle;
-        }
-
-        auto edge = GraphicEdge();
-        edge.touching = touching;
-        edge.line = std::make_pair(node1.position, node2.position);
-        graphicData.lines.emplace_back(edge);
-    }
-    return graphicData;
-}
-
 void Visualizer::onKeyDown(const SDL_Event &event) {
     switch(event.key.keysym.scancode) {
         case SDL_SCANCODE_A: {
-            solver.iteration();
-            graphicData = getGraphicDataFromData(solver.getNodes(), edges);
+            solver.run(1);
+            graphicData = solver.getGraphicData();
             break;
         }
         case SDL_SCANCODE_S: {
             solver.run(10);
-            graphicData = getGraphicDataFromData(solver.getNodes(), edges);
+            graphicData = solver.getGraphicData();
             break;
         }
         case SDL_SCANCODE_D: {
             solver.run(100);
-            graphicData = getGraphicDataFromData(solver.getNodes(), edges);
+            graphicData = solver.getGraphicData();
             break;
         }
         case SDL_SCANCODE_F: {
             solver.run(1000);
-            graphicData = getGraphicDataFromData(solver.getNodes(), edges);
+            graphicData = solver.getGraphicData();
             break;
         }
         case SDL_SCANCODE_G: {
             solver.run(10000);
-            graphicData = getGraphicDataFromData(solver.getNodes(), edges);
+            graphicData = solver.getGraphicData();
             break;
         }
         default:
@@ -200,27 +134,27 @@ void Visualizer::onKeyUp(const SDL_Event &event) {
 
         case SDL_SCANCODE_Q: {
             solver.run(1);
-            graphicData = getGraphicDataFromData(solver.getNodes(), edges);
+            graphicData = solver.getGraphicData();
             break;
         }
         case SDL_SCANCODE_W: {
             solver.run(10);
-            graphicData = getGraphicDataFromData(solver.getNodes(), edges);
+            graphicData = solver.getGraphicData();
             break;
         }
         case SDL_SCANCODE_E: {
             solver.run(100);
-            graphicData = getGraphicDataFromData(solver.getNodes(), edges);
+            graphicData = solver.getGraphicData();
             break;
         }
         case SDL_SCANCODE_R: {
             solver.run(1000);
-            graphicData = getGraphicDataFromData(solver.getNodes(), edges);
+            graphicData = solver.getGraphicData();
             break;
         }
         case SDL_SCANCODE_T: {
             solver.run(10000);
-            graphicData = getGraphicDataFromData(solver.getNodes(), edges);
+            graphicData = solver.getGraphicData();
             break;
         }
         case SDL_SCANCODE_P: {
@@ -240,10 +174,17 @@ void Visualizer::onKeyUp(const SDL_Event &event) {
         case SDL_SCANCODE_0: switchTo('9'); break;
         case SDL_SCANCODE_MINUS: switchTo('q'); break;
         case SDL_SCANCODE_EQUALS: switchTo('w'); break;
-        case SDL_SCANCODE_M: solver.printScore(); break;
         case SDL_SCANCODE_C: {
             solver.findSmallestNotColliding();
-            graphicData = getGraphicDataFromData(solver.getNodes(), edges);
+            graphicData = solver.getGraphicData();
+            break;
+        }
+        case SDL_SCANCODE_U: solver.toggleAngle(); break;
+        case SDL_SCANCODE_I: solver.toggleOverlap(); break;
+        case SDL_SCANCODE_O: solver.toggleDistance(); break;
+        case SDL_SCANCODE_X: {
+            solver.bestRotation();
+            graphicData = solver.getGraphicData();
             break;
         }
         default:
@@ -256,6 +197,10 @@ void Visualizer::switchTo(char c) {
 
     const auto lastSlash = inputFilePath.find_last_of("/\\");
     inputFilename = inputFilePath.substr(lastSlash+1);
+    const auto firstPoint = inputFilename.find_first_of('.');
+    const auto inputFileWithoutExt = inputFilename.substr(0, firstPoint);
+
+    window->setCaption(inputFileWithoutExt);
 
     inputData = InputReader::readFromFile(inputFilePath);
 
@@ -263,5 +208,5 @@ void Visualizer::switchTo(char c) {
 
     solver.init(inputData);
 
-    graphicData = getGraphicDataFromData(solver.getNodes(), edges);
+    graphicData = solver.getGraphicData();
 }

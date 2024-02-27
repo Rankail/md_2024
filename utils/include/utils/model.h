@@ -21,15 +21,19 @@ struct FullInputData {
 
 struct GraphicEdge {
     bool touching = false;
-    std::pair<Vec2d, Vec2d> line;
+    uPair idxs;
 };
 
 struct FullGraphicData {
     std::vector<Node> circles;
-    std::vector<GraphicEdge> lines;
-    unsigned worstOverlap = -1;
-    unsigned worstDistance = -1;
-    unsigned worstAngle = -1;
+    std::vector<GraphicEdge> edges;
+    uPair worstOverlap = {-1, -1};
+    uPair worstDistance = {-1, -1};
+    uPair worstAngle = {-1, -1};
+    double maxOverlap = 0.0;
+    double maxDistance = 0.0;
+    double maxAngle = 0.0;
+    double score = -1.0;
 };
 
 #endif //MD_2024_MODEL_H

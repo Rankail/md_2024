@@ -1,4 +1,5 @@
 #include "Solver.h"
+#include "utils/log/Logger.h"
 
 #include <algorithm>
 
@@ -7,6 +8,8 @@ bool Solver::init(const FullInputData* inputData) {
     original.clear();
     nodes.clear();
     edges.clear();
+
+    edgeInputCount = inputData->edges.size();
 
     for (const Node* node : inputData->nodes) {
         original.emplace_back(*node);
@@ -20,12 +23,87 @@ bool Solver::init(const FullInputData* inputData) {
         edges[idx2][idx1] = true;
     }
 
+    calculateWorstAndMakeGraphic();
+
     return true;
+}
+
+void Solver::calculateWorstAndMakeGraphic() {
+    auto minX = std::numeric_limits<double>::max();
+    auto minY = std::numeric_limits<double>::max();
+    auto maxX = std::numeric_limits<double>::min();
+    auto maxY = std::numeric_limits<double>::min();
+
+    for (const auto& circle : nodes) {
+        minX = std::min(minX, circle.position.x() - circle.radius);
+        minY = std::min(minY, circle.position.y() - circle.radius);
+        maxX = std::max(maxX, circle.position.x() + circle.radius);
+        maxY = std::max(maxY, circle.position.y() + circle.radius);
+    }
+    Vec2d positionOffset = Vec2d(minX, minY);
+    double scaleFactor = std::min(1 / (maxX - minX) * targetSize.x(), 1 / (maxY - minY) * targetSize.y());
+
+    graphicData = FullGraphicData();
+    for (const auto& circle : nodes) {
+        auto newCircle = circle;
+        newCircle.position -= positionOffset;
+        newCircle.position.x() *= scaleFactor;
+        newCircle.position.y() *= scaleFactor;
+        newCircle.radius *= scaleFactor;
+        graphicData.circles.emplace_back(newCircle);
+    }
+
+    for (int i = 0; i < nodes.size() - 1; i++) {
+        for (int j = i + 1; j < nodes.size(); j++) {
+            bool touching = false;
+            const auto& node1 = graphicData.circles[i];
+            const auto& node2 = graphicData.circles[j];
+            const auto diff = node1.position - node2.position;
+            const auto dist = std::hypot(diff.x(), diff.y());
+            const auto r12 = node1.radius + node2.radius;
+            if (dist < r12) {
+                touching = true;
+                const auto overlap = (r12 - dist) / r12;
+                if (overlap > graphicData.maxOverlap) {
+                    graphicData.worstOverlap = {i, j};
+                    graphicData.maxOverlap = overlap;
+                }
+            }
+            if (!edges[i][j]) continue;
+            const auto distance = (dist - r12) / r12;
+            if (distance > graphicData.maxDistance) {
+                graphicData.worstDistance = {i, j};
+                graphicData.maxDistance = distance;
+            }
+
+            const auto in1 = original[i];
+            const auto in2 = original[j];
+            const auto inDiff = in1.position - in2.position;
+            const auto angle = inDiff.smallestAngleTo(diff);
+            if (angle > graphicData.maxAngle) {
+                graphicData.worstAngle = {i, j};
+                graphicData.maxAngle = angle;
+            }
+
+            auto edge = GraphicEdge();
+            edge.touching = touching;
+            edge.idxs = {i, j};
+            graphicData.edges.emplace_back(edge);
+        }
+    }
+
+    graphicData.maxAngle = radToDeg(graphicData.maxAngle);
+    graphicData.maxOverlap *= 100.0;
+    graphicData.maxDistance *= 100.0;
+
+    graphicData.score = (1000 * (nodes.size() + edgeInputCount))
+                        / (1 + 2 * graphicData.maxOverlap + graphicData.maxDistance + graphicData.maxAngle / 18);
 }
 
 void Solver::run(unsigned iterations) {
     for (int i = 0; i < iterations; i++) {
         iteration();
+        calculateWorstAndMakeGraphic();
     }
 }
 
@@ -51,93 +129,117 @@ void Solver::findSmallestNotColliding() {
     for (int i = 0; i < nodes.size(); i++) {
         nodes[i].position *= factor;
     }
+
+    calculateWorstAndMakeGraphic();
 }
 
 void Solver::iteration() {
-    auto forces = std::vector<Vec2d>(nodes.size(), {0.0, 0.0});
-    for (int i = 0; i < nodes.size() - 1; i++) {
-        const auto& n1 = nodes[i];
-        for (int j = i + 1; j < nodes.size(); j++) {
-            const auto& n2 = nodes[j];
-            const auto diff = n2.position - n1.position;
-            const auto a2b2 = diff.x() * diff.x() + diff.y() * diff.y();
-            const auto r12 = n1.radius + n2.radius;
-            const auto c2 = r12 * r12;
-            if(edges[i][j]) {
-                Vec2d orgDiff = original[j].position - original[i].position;
-                auto angle = diff.angleTo(orgDiff);
-                if (angle > std::numbers::pi) angle -= 2 * std::numbers::pi;
-                const auto rotateBy = angle * 0.002;
-                const auto n2Rot = (diff / 2.).rotated2d(rotateBy);
-                const auto n2Trans = n2Rot - (diff / 2.);
-                forces[j] += n2Trans;
-                forces[i] -= n2Trans;
-            }
-            if (a2b2 < c2) {
-                const auto dist = std::sqrt(a2b2);
-                const auto force = (r12 - dist) / r12 * diff * 0.01;
-                forces[j] += force;
-                forces[i] -= force;
-                continue;
-            }
-            if (!edges[i][j]) continue;
-            if (a2b2 > c2) {
-                const auto dist = std::sqrt(a2b2);
-                const auto force = (dist - r12) / dist * diff * 0.01;
-                forces[j] -= force;
-                forces[i] += force;
-            }
-        }
-    }
+    if (doAngle) updateWorstAngle();
+    if (doDistance) updateWorstDistance();
+    if (doOverlap) updateWorstOverlap();
+}
 
-    for (int i = 0; i < nodes.size(); i++) {
-        nodes[i].position += forces[i];
+void Solver::setTargetSize(Vec2u targetSize) {
+    this->targetSize = targetSize;
+}
+
+void Solver::updateWorstDistance() {
+    if (graphicData.maxDistance <= 0.0) return;
+    const auto [idx1, idx2] = graphicData.worstDistance;
+    auto& n1 = nodes[idx1];
+    auto& n2 = nodes[idx2];
+    const auto diff = n2.position - n1.position;
+    const auto dist = std::hypot(diff.x(), diff.y());
+    const auto r12 = n1.radius + n2.radius;
+    const auto transform = diff.normalized() * (dist - r12) * 0.1;
+    n1.position += transform;
+    n2.position -= transform;
+}
+
+void Solver::updateWorstOverlap() {
+    if (graphicData.maxOverlap <= 0.0) return;
+    const auto [idx1, idx2] = graphicData.worstOverlap;
+    auto& n1 = nodes[idx1];
+    auto& n2 = nodes[idx2];
+    const auto diff = n2.position - n1.position;
+    const auto dist = std::hypot(diff.x(), diff.y());
+    const auto r12 = n1.radius + n2.radius;
+    const auto transform = diff.normalized() * (r12 - dist) * 0.1;
+    n1.position -= transform;
+    n2.position += transform;
+}
+
+void Solver::updateWorstAngle() {
+    if (graphicData.maxAngle <= 0.0) return;
+    const auto [idx1, idx2] = graphicData.worstAngle;
+    const auto& o1 = original[idx1];
+    const auto& o2 = original[idx2];
+    auto& n1 = nodes[idx1];
+    auto& n2 = nodes[idx2];
+    const auto oDiff = o2.position - o1.position;
+    const auto nDiff = n2.position - n1.position;
+    const auto r12 = n1.radius + n2.radius;
+    auto angle = nDiff.angleTo(oDiff);
+    if (angle > std::numbers::pi) {
+        angle = - (std::numbers::pi * 2.0 - angle);
+    }
+    const auto transform = (nDiff.rotated2d(-angle * 0.1) - nDiff) / 2.;
+    if (n1.radius > n2.radius) {
+        const auto factor = 1. / (n1.radius / n2.radius * 2.);
+        n1.position += transform * factor;
+        n2.position -= transform * (1. - factor);
+    } else if (n2.radius > n1.radius) {
+        const auto factor = 1. / (n2.radius / n1.radius * 2.);
+        n1.position += transform * (1. - factor);
+        n2.position -= transform * factor;
+    } else {
+        n1.position -= transform;
+        n2.position += transform;
     }
 }
 
-void Solver::printScore() {
-    double maxDistance = 0.0;
-    double maxOverlap = 0.0;
-    double maxAngle = 0.0;
+void Solver::toggleOverlap() {
+    doOverlap = !doOverlap;
+    TET_INFO("Overlap is now {}", doOverlap);
+}
 
+void Solver::toggleDistance() {
+    doDistance = !doDistance;
+    TET_INFO("Distance is now {}", doDistance);
+}
+
+void Solver::toggleAngle() {
+    doAngle = !doAngle;
+    TET_INFO("Angle is now {}", doAngle);
+}
+
+void Solver::bestRotation() {
+    double minAngle = std::numbers::pi;
+    double maxAngle = -std::numbers::pi;
     for (int i = 0; i < nodes.size()-1; i++) {
-        const auto& n1 = nodes[i];
-        for (int j = i + 1; j < nodes.size(); j++) {
-            const auto& n2 = nodes[j];
-            const auto diff = n1.position - n2.position;
-            const auto a2b2 = diff.x() * diff.x() + diff.y() * diff.y();
-            const auto r12 = n1.radius + n2.radius;
-            const auto c2 = r12 * r12;
-            if (a2b2 < c2) {
-                const auto dist = std::sqrt(a2b2);
-                const auto overlap = (r12 - dist) / r12;
-                maxOverlap = std::max(maxOverlap, overlap);
-            }
-            if (edges[i][j]) {
-                if (a2b2 > c2) {
-                    const auto dist = std::sqrt(a2b2);
-                    const auto unwantedDist = (dist - r12) / r12;
-                    maxDistance = std::max(maxDistance, unwantedDist);
-                }
+        for (int j = i+1; j < nodes.size(); j++) {
+            if (!edges[i][j]) continue;
 
-                const auto in1 = original[i];
-                const auto in2 = original[j];
-                const auto inDiff = in1.position - in2.position;
-                const auto angle = radToDeg(inDiff.smallestAngleTo(diff));
-                maxAngle = std::max(maxAngle, (double)angle);
+            const auto& o1 = original[i];
+            const auto& o2 = original[j];
+            const auto& n1 = nodes[i];
+            const auto& n2 = nodes[j];
+            const auto nDiff = n2.position - n1.position;
+            const auto oDiff = o2.position - o1.position;
+
+            double angle = nDiff.angleTo(oDiff);
+            if (angle > std::numbers::pi) {
+                angle = -(std::numbers::pi * 2.0 - angle);
             }
+            minAngle = std::min(minAngle, angle);
+            maxAngle = std::max(maxAngle, angle);
         }
     }
 
-    const auto overlapFactor = maxOverlap * 200;
-    const auto distanceFactor = maxDistance * 100;
-    const auto angleFactor = maxAngle / 18.0;
+    const double bestAngle = (minAngle + maxAngle) / 2.;
+    for (auto& node : nodes) {
+        node.position.rotate2d(bestAngle);
+    }
 
-    const auto score = 1000.0 * (nodes.size() + edges.size()) / (1 + overlapFactor + distanceFactor + angleFactor);
-    const auto scoreRounded = (int)(score + 0.5);
-
-    std::cout   << "Max overlap: " << maxOverlap << std::endl
-                << "Max distance: " << maxDistance << std::endl
-                << "Max angle: " << maxAngle << std::endl
-                << "Score: " << scoreRounded << std::endl;
+    calculateWorstAndMakeGraphic();
 }

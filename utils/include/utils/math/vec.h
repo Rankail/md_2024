@@ -5,6 +5,7 @@
 #include <iostream>
 #include <complex>
 #include <numbers>
+#include <algorithm>
 #include <cstring>
 #include <cassert>
 
@@ -643,7 +644,7 @@ public:
         return rotationXY(a) * *this;
     }
 
-    Type rotate2d(double a) const MAT_QUAD_MIN(2) {
+    Type rotate2d(double a) {
         return *this = rotated2d(a);
     }
 
@@ -818,7 +819,7 @@ public:
     float smallestAngleTo(const Type& o) const requires (N == 1) {
         const auto scalar = *this * o;
         const auto normProd = this->norm() * o.norm();
-        return acos(scalar / normProd);
+        return acos(std::clamp(scalar / normProd, -1.0, 1.0));
     }
 
     float angleTo(const Type& o) const requires (N == 1) {

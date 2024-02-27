@@ -5,13 +5,20 @@
 
 #include <utils/log/Logger.h>
 #include <utils/utils.h>
+#include <utils/Arguments.h>
 #include <utils/reader/InputReader.h>
 #include <utils/reader/OutputReader.h>
 
 int main(int argc, char* argv[]) {
+    Arguments args{argc, argv};
     Logger::init();
 
-    const std::string inputFilePath = selectFileFromDir(MD_INPUT_DIR);
+    char preSelection = '\0';
+    if (args.getArgCount() > 0) {
+        args >> preSelection;
+    }
+
+    const std::string inputFilePath = selectFileFromDir(MD_INPUT_DIR, preSelection);
     std::cout << inputFilePath << std::endl;
 
     auto lastSlash = inputFilePath.find_last_of("/\\");

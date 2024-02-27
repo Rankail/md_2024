@@ -160,24 +160,32 @@ void Window::render(const FullGraphicData& data) {
         colorIdx = (colorIdx + 1) % 8;
     }
 
-    for (int i = 0; i < data.lines.size(); i++) {
-        const auto& line = data.lines[i];
+    for (int i = 0; i < data.edges.size(); i++) {
+        const auto& edge = data.edges[i];
         Color c = Colors::BLACK;
-        if (data.worstAngle == i) {
+        if (data.worstAngle == edge.idxs) {
             c.r = 1.f;
         }
-        if (data.worstDistance == i) {
+        if (data.worstDistance == edge.idxs) {
             c.g = 1.f;
         }
-        if (data.worstOverlap == i) {
+        if (data.worstOverlap == edge.idxs) {
             c.b = 1.f;
         }
         dc->drawLine(
-            line.line.first.toFloat(),
-            line.line.second.toFloat(),
+            data.circles[edge.idxs.first].position.toFloat(),
+            data.circles[edge.idxs.second].position.toFloat(),
             Brush::solid(c),
             1);
     }
+
+    const auto x = narrow(dc->getWidth() * 4 / 5);
+    const auto font = dc->getFontFamily("rodin")->getFont(16);
+    const auto textCol = Brush::solid(Colors::BLACK);
+    dc->drawText({x, 10}, "Max Overlap: " + std::to_string(data.maxOverlap), font, textCol);
+    dc->drawText({x, 30}, "Max Distance: " + std::to_string(data.maxDistance), font, textCol);
+    dc->drawText({x, 50}, "Max Angle: " + std::to_string(data.maxAngle), font, textCol);
+    dc->drawText({x, 70}, "Score: " + std::to_string(data.score), font, textCol);
 }
 
 void Window::handleEvent(const SDL_Event &event) {

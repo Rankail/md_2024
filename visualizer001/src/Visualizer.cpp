@@ -128,8 +128,8 @@ FullGraphicData Visualizer::getGraphicDataFromData(const std::vector<Node> &inpu
         }
         auto edge = GraphicEdge();
         edge.touching = touching;
-        edge.line = std::make_pair(node1.position, node2.position);
-        graphicData.lines.emplace_back(edge);
+        edge.idxs = {idx1, idx2};
+        graphicData.edges.emplace_back(edge);
     }
     return graphicData;
 }

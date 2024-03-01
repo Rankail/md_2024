@@ -25,18 +25,18 @@ bool Solver::init(const FullInputData* inputData) {
     b2Vec2 gravity(0.0f, 0.0f);
     world = new b2World(gravity);
 
-    for (const Node* node : inputData->nodes) {
-        original.emplace_back(*node);
-        nodes.emplace_back(*node);
+    for (const Node& node : inputData->nodes) {
+        original.push_back(node);
+        nodes.push_back(node);
 
         b2BodyDef bodyDef;
         bodyDef.type = b2_dynamicBody;
-        bodyDef.position.Set(node->position.x(), node->position.y());
+        bodyDef.position.Set(node.position.x(), node.position.y());
         b2Body* body = world->CreateBody(&bodyDef);
 
         b2CircleShape shape;
         shape.m_p.Set(0.0f, 0.f);
-        shape.m_radius = node->radius;
+        shape.m_radius = node.radius;
 
         b2FixtureDef fixtureDef;
         fixtureDef.shape = &shape;

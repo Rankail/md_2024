@@ -15,7 +15,7 @@ public:
 
     void place(GraphNode* node);
 
-    std::vector<Node> getNodes(const std::vector<Node*>& originalNodes);
+    std::vector<Node> getNodes(const std::vector<Node>& originalNodes);
 
 };
 

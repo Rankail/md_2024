@@ -5,12 +5,12 @@
 #include "model2.h"
 
 bool Solver::init(const FullInputData* inputData) {
-    for (const Node* node : inputData->nodes) {
+    for (const Node& node : inputData->nodes) {
         nodes.emplace_back(new GraphNode{
-            node->index,
-            node->radius,
-            node->position,
-            node->position
+            node.index,
+            node.radius,
+            node.position,
+            node.position
         });
     }
 
@@ -46,10 +46,10 @@ void Solver::place(GraphNode *current) {
     }
 }
 
-std::vector<Node> Solver::getNodes(const std::vector<Node*>& originalNodes) {
+std::vector<Node> Solver::getNodes(const std::vector<Node>& originalNodes) {
     std::vector<Node> newNodes{};
     for (GraphNode* node : nodes) {
-        auto newNode = *originalNodes[node->id];
+        auto newNode = originalNodes[node->id];
         newNode.position = node->pos;
         newNodes.emplace_back(newNode);
     }

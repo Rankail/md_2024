@@ -14,17 +14,17 @@ FullGraphicData inputDataToGraphicData(const FullInputData& inputData, const Vec
     auto maxY = std::numeric_limits<double>::min();
 
     for (const auto& circle : inputData.nodes) {
-        minX = std::min(minX, circle->position.x() - circle->radius);
-        minY = std::min(minY, circle->position.y() - circle->radius);
-        maxX = std::max(maxX, circle->position.x() + circle->radius);
-        maxY = std::max(maxY, circle->position.y() + circle->radius);
+        minX = std::min(minX, circle.position.x() - circle.radius);
+        minY = std::min(minY, circle.position.y() - circle.radius);
+        maxX = std::max(maxX, circle.position.x() + circle.radius);
+        maxY = std::max(maxY, circle.position.y() + circle.radius);
     }
     Vec2d positionOffset = Vec2d(minX, maxY);
     double scaleFactor = std::min(1 / (maxX - minX) * targetSize.x(), 1 / (maxY - minY) * targetSize.y());
 
     auto graphicData = FullGraphicData();
     for (const auto& circle : inputData.nodes) {
-        auto newCircle = *circle;
+        auto newCircle = circle;
         newCircle.position -= positionOffset;
         newCircle.position.x() *= scaleFactor;
         newCircle.position.y() *= -scaleFactor;
@@ -44,8 +44,8 @@ FullGraphicData inputDataToGraphicData(const FullInputData& inputData, const Vec
         }
         auto edge = GraphicEdge();
         edge.touching = touching;
-        edge.line = std::make_pair(node1.position, node2.position);
-        graphicData.lines.emplace_back(edge);
+        edge.idxs = {idx1, idx2};
+        graphicData.edges.emplace_back(edge);
     }
     return graphicData;
 }

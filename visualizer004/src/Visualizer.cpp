@@ -132,30 +132,30 @@ FullGraphicData Visualizer::getGraphicDataFromData(const std::vector<Node> &inpu
             touching = true;
             const auto overlap = (r12 - dist) / r12;
             if (overlap > maxOverlap) {
-                graphicData.worstOverlap = i;
+                graphicData.worstOverlap = {idx1, idx2};
                 maxOverlap = overlap;
             }
         } else {
             const auto distance = (dist - r12) / r12;
             if (distance > maxDistance) {
-                graphicData.worstDistance = i;
+                graphicData.worstDistance = {idx1, idx2};
                 maxDistance = distance;
             }
         }
 
-        const auto in1 = inputData->nodes[idx1];
-        const auto in2 = inputData->nodes[idx2];
-        const auto inDiff = in1->position - in2->position;
+        const auto& in1 = inputData->nodes[idx1];
+        const auto& in2 = inputData->nodes[idx2];
+        const auto inDiff = in1.position - in2.position;
         const auto angle = inDiff.smallestAngleTo(diff);
         if (angle > maxAngle) {
-            graphicData.worstAngle = i;
+            graphicData.worstAngle = {idx1, idx2};
             maxAngle = (double)angle;
         }
 
         auto edge = GraphicEdge();
         edge.touching = touching;
-        edge.line = std::make_pair(node1.position, node2.position);
-        graphicData.lines.emplace_back(edge);
+        edge.idxs = {idx1, idx2};
+        graphicData.edges.emplace_back(edge);
     }
     return graphicData;
 }

@@ -3,9 +3,9 @@
 #include <algorithm>
 
 bool Solver::init(const FullInputData* inputData) {
-    for (const Node* node : inputData->nodes) {
-        original.emplace_back(*node);
-        nodes.emplace_back(*node);
+    for (const Node& node : inputData->nodes) {
+        original.push_back(node);
+        nodes.push_back(node);
     }
 
     edges = std::vector<std::vector<bool>>(nodes.size(), std::vector<bool>(nodes.size(), false));

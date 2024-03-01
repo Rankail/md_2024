@@ -18,8 +18,6 @@ FullInputData* InputReader::readFromFile(const std::string& path) {
 
     auto data = new FullInputData();
 
-    bool hadError = false;
-
     std::string line;
     unsigned lineNum = 0;
     std::unordered_map<std::string, unsigned> nameIdxMapping{};
@@ -28,33 +26,24 @@ FullInputData* InputReader::readFromFile(const std::string& path) {
         if (line.empty()) break;
         const auto node = readNodeLine(line, lineNum);
         lineNum++;
-        if (node == nullptr) {
-            hadError = true;
-            continue;
-        }
 
         data->nodes.emplace_back(node);
-        nameIdxMapping[node->name] = node->index;
+        nameIdxMapping[node.name] = node.index;
     }
 
     while (std::getline(file, line)) {
         const auto edge = readEdgeLine(line, nameIdxMapping);
-        if (edge.first == -1 || edge.second == -1) {
-            hadError = true;
-        }
-
         data->edges.emplace_back(edge);
     }
 
     file.close();
-    return hadError ? nullptr : data;
+    return data;
 }
 
-Node* InputReader::readNodeLine(const std::string& line, unsigned lineNum) {
+Node InputReader::readNodeLine(const std::string& line, unsigned lineNum) {
     const auto& data = splitAt(line, " \t");
     if (data.size() != 4) {
-        TET_ERROR("Incorrect node-read-data at line {}. Got {} data-points instead of 4.", lineNum, data.size());
-        return nullptr;
+        TET_CRITICAL("Incorrect node-read-data at line {}. Got {} data-points instead of 4.", lineNum, data.size());
     }
 
     unsigned index{lineNum};
@@ -66,10 +55,9 @@ Node* InputReader::readNodeLine(const std::string& line, unsigned lineNum) {
         std::stod(data[3])
     };
 
-    auto node = new Node{
+    return {
         index, name, weight, originalPos
     };
-    return node;
 }
 
 uPair InputReader::readEdgeLine(const std::string& line,
@@ -77,8 +65,7 @@ uPair InputReader::readEdgeLine(const std::string& line,
 
     const auto& data = splitAt(line, " \t");
     if (data.size() != 2) {
-        TET_ERROR("Incorrect edge-read-data. Got {} data-points instead of 2.", data.size());
-        return {-1, -1};
+        TET_CRITICAL("Incorrect edge-read-data. Got {} data-points instead of 2.", data.size());
     }
 
     auto name1 = data[0];
@@ -87,13 +74,13 @@ uPair InputReader::readEdgeLine(const std::string& line,
     auto it2 = nameIdxMapping.find(name2);
     auto pair = uPair{-1, -1};
     if (it1 == nameIdxMapping.end()) {
-        TET_ERROR("Incorrect node-name '{}'.", name1);
+        TET_CRITICAL("Incorrect node-name '{}'.", name1);
     } else {
         pair.first = it1->second;
     }
 
     if (it2 == nameIdxMapping.end()) {
-        TET_ERROR("Incorrect node-name '{}'.", name2);
+        TET_CRITICAL("Incorrect node-name '{}'.", name2);
     } else {
         pair.second = it2->second;
     }

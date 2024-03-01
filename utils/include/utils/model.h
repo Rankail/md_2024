@@ -15,7 +15,7 @@ struct Node {
 };
 
 struct FullInputData {
-    std::vector<Node*> nodes;
+    std::vector<Node> nodes;
     std::vector<uPair> edges;
 };
 
@@ -33,7 +33,10 @@ struct FullGraphicData {
     double maxOverlap = 0.0;
     double maxDistance = 0.0;
     double maxAngle = 0.0;
-    double score = -1.0;
+    int score = -1.0;
+    int maxScore = 0.0;
 };
+
+int calculateScore(const std::vector<Node>& original, const std::vector<Node>& nodes, const std::vector<uPair>& edges);
 
 #endif //MD_2024_MODEL_H

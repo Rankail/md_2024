@@ -50,15 +50,11 @@ bool Visualizer::init(const Vec2u& size) {
 
 void Visualizer::run(const std::string& inputFilePath) {
     const auto lastSlash = inputFilePath.find_last_of("/\\");
-    inputFilename = inputFilePath.substr(lastSlash+1);
-
-    inputData = InputReader::readFromFile(inputFilePath);
-
-    edges = inputData->edges;
+    const auto filename = inputFilePath.substr(lastSlash+1);
 
     solver.setTargetSize(window->getSize());
 
-    solver.init(inputData);
+    solver.init(filename);
 
     graphicData = solver.getGraphicData();
 
@@ -191,8 +187,7 @@ void Visualizer::onKeyUp(const SDL_Event &event) {
             break;
         }
         case SDL_SCANCODE_P: {
-            OutputPrinter::printToFile(std::string(MD_OUTPUT_DIR) + "/" + inputFilename + ".out", solver.getNodes());
-            TET_INFO("Printed");
+            solver.printToFile();
             break;
         }
         case SDL_SCANCODE_1: switchTo('0'); break;
@@ -232,17 +227,13 @@ void Visualizer::switchTo(char c) {
     auto inputFilePath = selectFileFromDir(MD_INPUT_DIR, c);
 
     const auto lastSlash = inputFilePath.find_last_of("/\\");
-    inputFilename = inputFilePath.substr(lastSlash+1);
-    const auto firstPoint = inputFilename.find_first_of('.');
-    const auto inputFileWithoutExt = inputFilename.substr(0, firstPoint);
+    const auto filename = inputFilePath.substr(lastSlash+1);
+    const auto firstPoint = filename.find_first_of('.');
+    const auto inputFileWithoutExt = filename.substr(0, firstPoint);
 
     window->setCaption(inputFileWithoutExt);
 
-    inputData = InputReader::readFromFile(inputFilePath);
-
-    edges = inputData->edges;
-
-    solver.init(inputData);
+    solver.init(filename);
 
     graphicData = solver.getGraphicData();
 }

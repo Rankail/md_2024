@@ -11,6 +11,7 @@ add_library(utils
     src/reader/InputReader.cpp
     src/reader/OutputReader.cpp
     src/printer/OutputPrinter.cpp
+        src/model.cpp
 )
 
 target_include_directories(utils PRIVATE "${UTILS_INCLUDE_DIR}")

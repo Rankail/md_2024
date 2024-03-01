@@ -11,10 +11,7 @@ private:
     Window* window;
     bool quit = false;
     Solver solver;
-    std::string inputFilename;
-    std::vector<uPair> edges;
     FullGraphicData graphicData;
-    FullInputData* inputData;
 
 public:
     Visualizer() = default;

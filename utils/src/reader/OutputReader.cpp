@@ -7,7 +7,7 @@
 #include "utils/log/Logger.h"
 #include "utils/utils.h"
 
-std::vector<Node *> *OutputReader::readFromFile(const std::string& path) {
+std::vector<Node> *OutputReader::readFromFile(const std::string& path) {
     std::ifstream file{path, std::ios::in};
 
     if (!file.is_open()) {
@@ -16,32 +16,25 @@ std::vector<Node *> *OutputReader::readFromFile(const std::string& path) {
         return nullptr;
     }
 
-    auto data = new std::vector<Node*>();
-
-    bool hadError = false;
+    auto data = new std::vector<Node>();
 
     std::string line;
     unsigned lineNum = 0;
     while (std::getline(file, line)) {
         const auto node = readNodeLine(line, lineNum);
         lineNum++;
-        if (node == nullptr) {
-            hadError = true;
-            continue;
-        }
 
         data->emplace_back(node);
     }
 
     file.close();
-    return hadError ? nullptr : data;
+    return data;
 }
 
-Node *OutputReader::readNodeLine(const std::string& line, unsigned int lineNum) {
+Node OutputReader::readNodeLine(const std::string& line, unsigned int lineNum) {
     const auto& data = splitAt(line, " \t");
     if (data.size() != 5) {
-        TET_ERROR("Incorrect node-read-data at line {}. Got {} data-points instead of 5.", lineNum, data.size());
-        return nullptr;
+        TET_CRITICAL("Incorrect node-read-data at line {}. Got {} data-points instead of 5.", lineNum, data.size());
     }
 
     Vec2d position{
@@ -52,8 +45,7 @@ Node *OutputReader::readNodeLine(const std::string& line, unsigned int lineNum) 
     std::string name{data[3]};
     unsigned index{std::stoul(data[4])};
 
-    auto node = new Node{
+    return {
         index, name, radius, position
     };
-    return node;
 }

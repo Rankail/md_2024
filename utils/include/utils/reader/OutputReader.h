@@ -5,10 +5,10 @@
 
 class OutputReader {
 public:
-    static std::vector<Node*>* readFromFile(const std::string& path);
+    static std::vector<Node>* readFromFile(const std::string& path);
 
 private:
-    static Node* readNodeLine(const std::string& line, unsigned lineNum);
+    static Node readNodeLine(const std::string& line, unsigned lineNum);
 };
 
 

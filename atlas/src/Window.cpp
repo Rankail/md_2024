@@ -186,6 +186,7 @@ void Window::render(const FullGraphicData& data) {
     dc->drawText({x, 30}, "Max Distance: " + std::to_string(data.maxDistance), font, textCol);
     dc->drawText({x, 50}, "Max Angle: " + std::to_string(data.maxAngle), font, textCol);
     dc->drawText({x, 70}, "Score: " + std::to_string(data.score), font, textCol);
+    dc->drawText({x, 90}, "Max Score: " + std::to_string(data.maxScore), font, textCol);
 }
 
 void Window::handleEvent(const SDL_Event &event) {

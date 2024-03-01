@@ -2,8 +2,16 @@
 #include "utils/log/Logger.h"
 
 #include <algorithm>
+#include <utils/reader/InputReader.h>
+#include <utils/reader/OutputReader.h>
+#include <utils/printer/OutputPrinter.h>
 
-bool Solver::init(const FullInputData* inputData) {
+bool Solver::init(const std::string& filename) {
+    this->filename = filename;
+    auto inputData = InputReader::readFromFile(std::string(MD_INPUT_DIR) + '/' + filename);
+    auto outputData = OutputReader::readFromFile(std::string(MD_OUTPUT_DIR) + '/' + filename + ".out");
+
+    maxScore = calculateScore(inputData->nodes, *outputData, inputData->edges);
 
     original.clear();
     nodes.clear();
@@ -11,14 +19,14 @@ bool Solver::init(const FullInputData* inputData) {
 
     overlapFactor = 0.1;
     distanceFactor = 0.1;
-    angleFactor = 0.1;
+    angleFactor = 0.01;
     TET_INFO("Dist {} / Over {} / Angle {}", distanceFactor, overlapFactor, angleFactor);
 
     edgeInputCount = inputData->edges.size();
 
-    for (const Node* node : inputData->nodes) {
-        original.emplace_back(*node);
-        nodes.emplace_back(*node);
+    for (const Node& node : inputData->nodes) {
+        original.emplace_back(Node(node));
+        nodes.emplace_back(Node(node));
     }
 
     edges = std::vector<std::vector<bool>>(nodes.size(), std::vector<bool>(nodes.size(), false));
@@ -104,6 +112,12 @@ void Solver::calculateWorstAndMakeGraphic() {
 
     graphicData.score = (1000 * (nodes.size() + edgeInputCount))
                         / (1 + 2 * graphicData.maxOverlap + graphicData.maxDistance + graphicData.maxAngle / 18);
+
+    if (maxScore < graphicData.score) {
+        maxScore = graphicData.score;
+        TET_INFO("Print");
+    }
+    graphicData.maxScore = maxScore;
 }
 
 void Solver::run(unsigned iterations) {
@@ -111,6 +125,7 @@ void Solver::run(unsigned iterations) {
         iteration();
         calculateWorstAndMakeGraphic();
     }
+    bestRotation();
 }
 
 void Solver::findSmallestNotColliding() {
@@ -184,20 +199,13 @@ void Solver::updateWorstAngle() {
     auto& n2 = nodes[idx2];
     const auto oDiff = o2.position - o1.position;
     const auto nDiff = n2.position - n1.position;
-    const auto r12 = n1.radius + n2.radius;
     auto angle = nDiff.angleTo(oDiff);
     if (angle > std::numbers::pi) {
         angle = - (std::numbers::pi * 2.0 - angle);
     }
     const auto transform = (nDiff.rotated2d(-angle * angleFactor) - nDiff) / 2.;
-    if (n1.radius > n2.radius) {
-        n2.position -= transform;
-    } else if (n2.radius > n1.radius) {
-        n1.position += transform;
-    } else {
-        n1.position -= transform;
-        n2.position += transform;
-    }
+    n1.position += transform;
+    n2.position -= transform;
 }
 
 void Solver::bestRotation() {
@@ -252,7 +260,7 @@ void Solver::weakenOverlap() {
 }
 
 void Solver::strengthenAngle() {
-    angleFactor = std::min(0.2, angleFactor * 1.5 + 0.0001);
+    angleFactor = std::min(1.0, angleFactor * 1.5 + 0.0001);
     TET_INFO("Dist {} / Over {} / Angle {}", distanceFactor, overlapFactor, angleFactor);
 }
 
@@ -274,4 +282,9 @@ void Solver::decreaseZoom() {
 void Solver::moveOffset(Vec2d move) {
     offset += move * zoom;
     calculateWorstAndMakeGraphic();
+}
+
+void Solver::printToFile() {
+    OutputPrinter::printToFile(std::string(MD_OUTPUT_DIR) + "/" + filename + ".out", nodes);
+    TET_INFO("Printed {}", graphicData.score);
 }

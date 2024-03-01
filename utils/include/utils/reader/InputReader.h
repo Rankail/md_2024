@@ -10,7 +10,7 @@ public:
     static FullInputData* readFromFile(const std::string& path);
 
 private:
-    static Node* readNodeLine(const std::string& line, unsigned lineNum);
+    static Node readNodeLine(const std::string& line, unsigned lineNum);
     static uPair readEdgeLine(const std::string& line, const std::unordered_map<std::string, unsigned>& nameIdxMapping);
 };
 

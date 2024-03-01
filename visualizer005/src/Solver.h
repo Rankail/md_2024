@@ -5,21 +5,27 @@
 
 class Solver {
 private:
+    std::string filename;
+    unsigned edgeInputCount = 0;
+
     std::vector<Node> nodes;
     std::vector<Node> original;
     std::vector<std::vector<bool>> edges;
-    unsigned edgeInputCount = 0;
+
     FullGraphicData graphicData;
     Vec2u targetSize;
+    int maxScore = 0;
+
     double overlapFactor = 0.1;
     double distanceFactor = 0.1;
     double angleFactor = 0.1;
     double zoom = 1.0;
     Vec2d offset = {0.0, 0.0};
 
+
 public:
-    bool init(const FullInputData* inputData);
-    void run(unsigned iterations = 500);
+    bool init(const std::string& inputFilename);
+    void run(unsigned iterations);
 
     void iteration();
     void updateWorstDistance();
@@ -30,6 +36,8 @@ public:
     void bestRotation();
 
     void calculateWorstAndMakeGraphic();
+
+    void printToFile();
 
 
     const std::vector<Node>& getNodes() const { return nodes; }

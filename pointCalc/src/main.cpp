@@ -51,11 +51,11 @@ int main(int argc, char* argv[]) {
 
     for (int i = 0; i < outputData.size()-1; i++) {
         for (int j = i + 1; j < outputData.size(); j++) {
-            const auto n1 = outputData[i];
-            const auto n2 = outputData[j];
-            const auto diff = n1->position - n2->position;
+            const auto& n1 = outputData[i];
+            const auto& n2 = outputData[j];
+            const auto diff = n1.position - n2.position;
             const auto a2b2 = diff.x() * diff.x() + diff.y() * diff.y();
-            const auto r12 = n1->radius + n2->radius;
+            const auto r12 = n1.radius + n2.radius;
             const auto c2 = r12 * r12;
             if (a2b2 < c2) {
                 const auto dist = std::sqrt(a2b2);
@@ -69,9 +69,9 @@ int main(int argc, char* argv[]) {
                     maxDistance = std::max(maxDistance, unwantedDist);
                 }
 
-                const auto in1 = inputData->nodes[i];
-                const auto in2 = inputData->nodes[j];
-                const auto inDiff = in1->position - in2->position;
+                const auto& in1 = inputData->nodes[i];
+                const auto& in2 = inputData->nodes[j];
+                const auto inDiff = in1.position - in2.position;
                 const auto angle = radToDeg(inDiff.smallestAngleTo(diff));
                 maxAngle = std::max(maxAngle, (double)angle);
                 edgeIdx++;

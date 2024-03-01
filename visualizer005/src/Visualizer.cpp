@@ -91,68 +91,58 @@ void Visualizer::handleEvents() {
 }
 
 void Visualizer::onKeyDown(const SDL_Event &event) {
-    TET_INFO("Physical {} key acting as {} key",
-        SDL_GetScancodeName(event.key.keysym.scancode),
-        SDL_GetKeyName(event.key.keysym.sym));
+//    TET_INFO("Physical {} key acting as {} key",
+//        SDL_GetScancodeName(event.key.keysym.scancode),
+//        SDL_GetKeyName(event.key.keysym.sym));
     switch(event.key.keysym.scancode) {
         case SDL_SCANCODE_A: {
             solver.run(1);
-            graphicData = solver.getGraphicData();
             break;
         }
         case SDL_SCANCODE_S: {
             solver.run(10);
-            graphicData = solver.getGraphicData();
             break;
         }
         case SDL_SCANCODE_D: {
             solver.run(100);
-            graphicData = solver.getGraphicData();
             break;
         }
         case SDL_SCANCODE_F: {
             solver.run(1000);
-            graphicData = solver.getGraphicData();
             break;
         }
         case SDL_SCANCODE_G: {
             solver.run(10000);
-            graphicData = solver.getGraphicData();
             break;
         }
         case SDL_SCANCODE_UP: {
             solver.moveOffset({0., -10.});
-            graphicData = solver.getGraphicData();
             break;
         }
         case SDL_SCANCODE_DOWN: {
             solver.moveOffset({0., 10.});
-            graphicData = solver.getGraphicData();
             break;
         }
         case SDL_SCANCODE_LEFT: {
             solver.moveOffset({-10., 0.});
-            graphicData = solver.getGraphicData();
             break;
         }
         case SDL_SCANCODE_RIGHT: {
             solver.moveOffset({10., 0.});
-            graphicData = solver.getGraphicData();
             break;
         }
         case SDL_SCANCODE_RIGHTBRACKET: {
             solver.decreaseZoom();
-            graphicData = solver.getGraphicData();
             break;
         }
         case SDL_SCANCODE_BACKSLASH: {
             solver.increaseZoom();
-            graphicData = solver.getGraphicData();
             break;
         }
         default:
-            break;
+            return;
     }
+    graphicData = solver.getGraphicData();
 }
 
 void Visualizer::onKeyUp(const SDL_Event &event) {
@@ -163,31 +153,27 @@ void Visualizer::onKeyUp(const SDL_Event &event) {
 
         case SDL_SCANCODE_Q: {
             solver.run(1);
-            graphicData = solver.getGraphicData();
             break;
         }
         case SDL_SCANCODE_W: {
             solver.run(10);
-            graphicData = solver.getGraphicData();
             break;
         }
         case SDL_SCANCODE_E: {
             solver.run(100);
-            graphicData = solver.getGraphicData();
             break;
         }
         case SDL_SCANCODE_R: {
             solver.run(1000);
-            graphicData = solver.getGraphicData();
             break;
         }
         case SDL_SCANCODE_T: {
             solver.run(10000);
-            graphicData = solver.getGraphicData();
             break;
         }
         case SDL_SCANCODE_P: {
-            solver.printToFile();
+            // solver.printToFile();
+            TET_WARN("P(rinting) manually is deprecated");
             break;
         }
         case SDL_SCANCODE_1: switchTo('0'); break;
@@ -204,7 +190,6 @@ void Visualizer::onKeyUp(const SDL_Event &event) {
         case SDL_SCANCODE_EQUALS: switchTo('w'); break;
         case SDL_SCANCODE_C: {
             solver.findSmallestNotColliding();
-            graphicData = solver.getGraphicData();
             break;
         }
         case SDL_SCANCODE_U: solver.strengthenDistance(); break;
@@ -215,12 +200,12 @@ void Visualizer::onKeyUp(const SDL_Event &event) {
         case SDL_SCANCODE_L: solver.weakenAngle(); break;
         case SDL_SCANCODE_X: {
             solver.bestRotation();
-            graphicData = solver.getGraphicData();
             break;
         }
         default:
-            break;
+            return;
     }
+    graphicData = solver.getGraphicData();
 }
 
 void Visualizer::switchTo(char c) {
@@ -234,6 +219,4 @@ void Visualizer::switchTo(char c) {
     window->setCaption(inputFileWithoutExt);
 
     solver.init(filename);
-
-    graphicData = solver.getGraphicData();
 }

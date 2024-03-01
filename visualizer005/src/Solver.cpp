@@ -13,6 +13,8 @@ bool Solver::init(const std::string& filename) {
 
     maxScore = calculateScore(inputData->nodes, *outputData, inputData->edges);
 
+    totalSteps = 0;
+
     original.clear();
     nodes.clear();
     edges.clear();
@@ -20,13 +22,12 @@ bool Solver::init(const std::string& filename) {
     overlapFactor = 0.1;
     distanceFactor = 0.1;
     angleFactor = 0.01;
-    TET_INFO("Dist {} / Over {} / Angle {}", distanceFactor, overlapFactor, angleFactor);
 
     edgeInputCount = inputData->edges.size();
 
     for (const Node& node : inputData->nodes) {
-        original.emplace_back(Node(node));
-        nodes.emplace_back(Node(node));
+        original.push_back(node);
+        nodes.push_back(node);
     }
 
     edges = std::vector<std::vector<bool>>(nodes.size(), std::vector<bool>(nodes.size(), false));
@@ -115,9 +116,15 @@ void Solver::calculateWorstAndMakeGraphic() {
 
     if (maxScore < graphicData.score) {
         maxScore = graphicData.score;
-        TET_INFO("Print");
+        printToFile();
     }
     graphicData.maxScore = maxScore;
+
+    graphicData.totalSteps = totalSteps;
+
+    graphicData.distanceFactor = distanceFactor;
+    graphicData.overlapFactor = overlapFactor;
+    graphicData.angleFactor = angleFactor;
 }
 
 void Solver::run(unsigned iterations) {
@@ -126,6 +133,7 @@ void Solver::run(unsigned iterations) {
         calculateWorstAndMakeGraphic();
     }
     bestRotation();
+    totalSteps += iterations;
 }
 
 void Solver::findSmallestNotColliding() {
@@ -241,32 +249,32 @@ void Solver::bestRotation() {
 
 void Solver::strengthenDistance() {
     distanceFactor = std::min(0.2, distanceFactor * 1.5 + 0.0001);
-    TET_INFO("Dist {} / Over {} / Angle {}", distanceFactor, overlapFactor, angleFactor);
+    calculateWorstAndMakeGraphic();
 }
 
 void Solver::weakenDistance() {
     distanceFactor = std::max(0.0, distanceFactor * 0.6 - 0.0001);
-    TET_INFO("Dist {} / Over {} / Angle {}", distanceFactor, overlapFactor, angleFactor);
+    calculateWorstAndMakeGraphic();
 }
 
 void Solver::strengthenOverlap() {
     overlapFactor = std::min(0.2, overlapFactor * 1.5 + 0.0001);
-    TET_INFO("Dist {} / Over {} / Angle {}", distanceFactor, overlapFactor, angleFactor);
+    calculateWorstAndMakeGraphic();
 }
 
 void Solver::weakenOverlap() {
     overlapFactor = std::max(0.0, overlapFactor * 0.6 - 0.0001);
-    TET_INFO("Dist {} / Over {} / Angle {}", distanceFactor, overlapFactor, angleFactor);
+    calculateWorstAndMakeGraphic();
 }
 
 void Solver::strengthenAngle() {
     angleFactor = std::min(1.0, angleFactor * 1.5 + 0.0001);
-    TET_INFO("Dist {} / Over {} / Angle {}", distanceFactor, overlapFactor, angleFactor);
+    calculateWorstAndMakeGraphic();
 }
 
 void Solver::weakenAngle() {
     angleFactor = std::max(0.0, angleFactor * 0.6 - 0.0001);
-    TET_INFO("Dist {} / Over {} / Angle {}", distanceFactor, overlapFactor, angleFactor);
+    calculateWorstAndMakeGraphic();
 }
 
 void Solver::increaseZoom() {

@@ -16,6 +16,8 @@ private:
     Vec2u targetSize;
     int maxScore = 0;
 
+    unsigned totalSteps;
+
     double overlapFactor = 0.1;
     double distanceFactor = 0.1;
     double angleFactor = 0.1;

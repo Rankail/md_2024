@@ -187,6 +187,12 @@ void Window::render(const FullGraphicData& data) {
     dc->drawText({x, 50}, "Max Angle: " + std::to_string(data.maxAngle), font, textCol);
     dc->drawText({x, 70}, "Score: " + std::to_string(data.score), font, textCol);
     dc->drawText({x, 90}, "Max Score: " + std::to_string(data.maxScore), font, textCol);
+
+    dc->drawText({narrow(dc->getWidth()) / 2, 10}, "Steps: " + std::to_string(data.totalSteps), font, textCol);
+
+    dc->drawText({20, 10}, "Distance Factor: " + std::to_string(data.distanceFactor), font, textCol);
+    dc->drawText({20, 30}, "Overlap Factor: " + std::to_string(data.overlapFactor), font, textCol);
+    dc->drawText({20, 50}, "Angle Factor: " + std::to_string(data.angleFactor), font, textCol);
 }
 
 void Window::handleEvent(const SDL_Event &event) {

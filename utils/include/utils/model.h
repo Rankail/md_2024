@@ -27,14 +27,23 @@ struct GraphicEdge {
 struct FullGraphicData {
     std::vector<Node> circles;
     std::vector<GraphicEdge> edges;
+
     uPair worstOverlap = {-1, -1};
     uPair worstDistance = {-1, -1};
     uPair worstAngle = {-1, -1};
+
     double maxOverlap = 0.0;
     double maxDistance = 0.0;
     double maxAngle = 0.0;
+
     int score = -1.0;
     int maxScore = 0.0;
+
+    double distanceFactor = 0.1;
+    double overlapFactor = 0.1;
+    double angleFactor = 0.1;
+
+    unsigned totalSteps = 0;
 };
 
 int calculateScore(const std::vector<Node>& original, const std::vector<Node>& nodes, const std::vector<uPair>& edges);

@@ -2,6 +2,8 @@
 #include "utils/log/Logger.h"
 
 #include <algorithm>
+#include <random>
+
 #include <utils/reader/InputReader.h>
 #include <utils/reader/OutputReader.h>
 #include <utils/printer/OutputPrinter.h>
@@ -55,7 +57,7 @@ void Solver::calculateWorstAndMakeGraphic() {
         maxY = std::max(maxY, circle.position.y() + circle.radius);
     }
     Vec2d positionOffset = Vec2d(minX, minY);
-    double scaleFactor = std::min(1 / (maxX - minX) * targetSize.x(), 1 / (maxY - minY) * targetSize.y());
+    double scaleFactor = std::min(targetSize.x() / (maxX - minX), targetSize.y() / (maxY - minY));
 
     graphicData = FullGraphicData();
     for (const auto& circle : nodes) {
@@ -295,4 +297,21 @@ void Solver::moveOffset(Vec2d move) {
 void Solver::printToFile() {
     OutputPrinter::printToFile(std::string(MD_OUTPUT_DIR) + "/" + filename + ".out", nodes);
     TET_INFO("Printed {}", graphicData.score);
+}
+
+void Solver::randomizePositions() {
+    double maxRadius = 0.0;
+    for (const auto& node : nodes) {
+        maxRadius = std::max(maxRadius, node.radius);
+    }
+
+    std::random_device rd{};
+    std::mt19937 rng{rd()};
+    std::uniform_real_distribution<double> distr(0.0, std::sqrt(nodes.size()) * maxRadius);
+
+    for (auto& node : nodes) {
+        node.position = {distr(rng), distr(rng)};
+    }
+
+    calculateWorstAndMakeGraphic();
 }

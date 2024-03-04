@@ -36,11 +36,11 @@ public:
 
     void findSmallestNotColliding();
     void bestRotation();
+    void randomizePositions();
 
     void calculateWorstAndMakeGraphic();
 
     void printToFile();
-
 
     const std::vector<Node>& getNodes() const { return nodes; }
     const FullGraphicData& getGraphicData() const { return graphicData; }

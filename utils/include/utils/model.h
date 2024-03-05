@@ -47,5 +47,6 @@ struct FullGraphicData {
 };
 
 int calculateScore(const std::vector<Node>& original, const std::vector<Node>& nodes, const std::vector<uPair>& edges);
+int calculateScore2(const std::vector<Node>& original, const std::vector<Node>& nodes, const std::vector<uPair>& edges);
 
 #endif //MD_2024_MODEL_H

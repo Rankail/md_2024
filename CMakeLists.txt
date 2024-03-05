@@ -3,6 +3,8 @@ set(CMAKE_CXX_STANDARD 20)
 
 project("md_2024")
 
+set(GROUP_NAME "tetris-for-the-win")
+
 set(PROJECT_DEPENDENCY_DIR "${CMAKE_SOURCE_DIR}/deps")
 set(PROJECT_ARTEFACT_DIR  "${CMAKE_SOURCE_DIR}/bin")
 set(PROJECT_BINARY_DIR "${PROJECT_ARTEFACT_DIR}")
@@ -11,8 +13,8 @@ set(MD_DEPENDENCY_DIR "${CMAKE_SOURCE_DIR}/deps")
 set(MD_UTILS_DIR "${CMAKE_SOURCE_DIR}/utils/include")
 set(MD_ATLAS_DIR "${CMAKE_SOURCE_DIR}/atlas/include")
 set(MD_ATLAS_RSC_DIR "${CMAKE_SOURCE_DIR}/atlas/rsc")
-set(MD_INPUT_DIR "${CMAKE_SOURCE_DIR}/../tetris-for-the-win/input_files")
-set(MD_OUTPUT_DIR "${CMAKE_SOURCE_DIR}/../tetris-for-the-win/result_files")
+set(MD_INPUT_DIR "${CMAKE_SOURCE_DIR}/../${GROUP_NAME}/input_files")
+set(MD_OUTPUT_DIR "${CMAKE_SOURCE_DIR}/../${GROUP_NAME}/result_files")
 
 add_compile_definitions(MD_INPUT_DIR="${MD_INPUT_DIR}" MD_OUTPUT_DIR="${MD_OUTPUT_DIR}")
 
@@ -67,6 +69,7 @@ add_subdirectory(utils)
 add_subdirectory(atlas)
 
 add_subdirectory(pointCalc)
+add_subdirectory(pointCalc2)
 
 add_subdirectory(solver001)
 add_subdirectory(solver002)

@@ -4,7 +4,6 @@ set(POINTCALC_SRC_DIR "${CMAKE_SOURCE_DIR}/pointCalc/src")
 
 add_executable(pointCalc
     src/main.cpp
-        ../solver002/src/model2.h
 )
 
 set_target_output_dirs(pointCalc)

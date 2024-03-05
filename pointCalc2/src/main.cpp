@@ -5,6 +5,7 @@
 
 #include <utils/log/Logger.h>
 #include <utils/utils.h>
+#include <utils/Arguments.h>
 #include <utils/reader/InputReader.h>
 #include <utils/reader/OutputReader.h>
 
@@ -43,7 +44,7 @@ int main(int argc, char* argv[]) {
 
         auto edges = inputData->edges;
 
-        const auto score = calculateScore(inputData->nodes, outputData, edges);
+        const auto score = calculateScore2(inputData->nodes, outputData, edges);
         scoreSum += score;
         std::cout << rightFill(filename + ": ", maxNameLength + 2) << score << std::endl;
     }

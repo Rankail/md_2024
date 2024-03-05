@@ -24,32 +24,38 @@ private:
     double zoom = 1.0;
     Vec2d offset = {0.0, 0.0};
 
-
 public:
     bool init(const std::string& inputFilename);
     void run(unsigned iterations);
 
+    // iterations
     void iteration();
     void updateWorstDistance();
     void updateWorstOverlap();
     void updateWorstAngle();
 
+    // update state specific
     void findSmallestNotColliding();
     void bestRotation();
     void randomizePositions();
 
+    // update stats
     void calculateWorstAndMakeGraphic();
 
+    // output
     void printToFile();
 
+    // get Data
     const std::vector<Node>& getNodes() const { return nodes; }
     const FullGraphicData& getGraphicData() const { return graphicData; }
 
+    // camera
     void setTargetSize(Vec2u targetSize);
     void increaseZoom();
     void decreaseZoom();
     void moveOffset(Vec2d offset);
 
+    // change Factors
     void strengthenDistance();
     void weakenDistance();
     void strengthenOverlap();

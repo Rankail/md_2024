@@ -11,7 +11,7 @@ private:
     Window* window;
     bool quit = false;
     Solver solver;
-    FullGraphicDataWorstEdges graphicData;
+    FullGraphicData2 graphicData;
 
 public:
     Visualizer() = default;
@@ -27,6 +27,8 @@ public:
     void onKeyUp(const SDL_Event& event);
 
     void switchTo(char c);
+
+    FullGraphicData2 getGraphicDataFromData(const std::vector<Node>& inputNodes, const std::vector<uPair>& edges);
 };
 
 

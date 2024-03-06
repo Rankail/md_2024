@@ -64,7 +64,6 @@ int calculateScore2(const std::vector<Node> &original, const std::vector<Node> &
 
     unsigned edgeCount = 0;
     double distanceSum = 0.0;
-    unsigned distCount = 0;
     double angleSum = 0.0;
     double maxOverlap = 0.0;
 
@@ -87,7 +86,6 @@ int calculateScore2(const std::vector<Node> &original, const std::vector<Node> &
                     const auto dist = std::sqrt(a2b2);
                     const auto unwantedDist = (dist - r12) / r12;
                     distanceSum += unwantedDist;
-                    distCount++;
                 }
 
                 const auto& in1 = original[i];
@@ -100,7 +98,7 @@ int calculateScore2(const std::vector<Node> &original, const std::vector<Node> &
     }
 
     maxOverlap *= 100;
-    const auto distanceAvg = distanceSum * 100 / distCount;
+    const auto distanceAvg = distanceSum * 100 / edgeCount;
     const auto angleAvg = angleSum * 100 / edgeCount;
 
     TET_INFO("O: {}; D: {}; A: {}", maxOverlap, distanceAvg, angleAvg);

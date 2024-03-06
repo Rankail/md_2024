@@ -12,7 +12,7 @@ private:
     std::vector<Node> original;
     std::vector<std::vector<bool>> edges;
 
-    FullGraphicDataWorstEdges graphicData;
+    FullGraphicData2 graphicData;
     Vec2u targetSize;
     int maxScore = 0;
 
@@ -47,7 +47,7 @@ public:
 
     // get Data
     const std::vector<Node>& getNodes() const { return nodes; }
-    const FullGraphicDataWorstEdges& getGraphicData() const { return graphicData; }
+    const FullGraphicData2& getGraphicData() const { return graphicData; }
 
     // camera
     void setTargetSize(Vec2u targetSize);

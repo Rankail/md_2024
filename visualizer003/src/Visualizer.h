@@ -13,7 +13,7 @@ private:
     Solver solver;
     std::string inputFilename;
     std::vector<uPair> edges;
-    FullGraphicData graphicData;
+    FullGraphicDataWorstEdges graphicData;
     FullInputData* inputData;
 
 public:
@@ -31,7 +31,7 @@ public:
 
     void switchTo(char c);
 
-    FullGraphicData getGraphicDataFromData(const std::vector<Node>& inputNodes, const std::vector<uPair>& edges);
+    FullGraphicDataWorstEdges getGraphicDataFromData(const std::vector<Node>& inputNodes, const std::vector<uPair>& edges);
 };
 
 

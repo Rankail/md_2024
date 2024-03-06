@@ -89,7 +89,7 @@ void Visualizer::handleEvents() {
     }
 }
 
-FullGraphicData Visualizer::getGraphicDataFromData(const std::vector<Node> &inputNodes, const std::vector<uPair> &edges) {
+FullGraphicDataWorstEdges Visualizer::getGraphicDataFromData(const std::vector<Node> &inputNodes, const std::vector<uPair> &edges) {
     auto minX = std::numeric_limits<double>::max();
     auto minY = std::numeric_limits<double>::max();
     auto maxX = std::numeric_limits<double>::min();
@@ -105,7 +105,7 @@ FullGraphicData Visualizer::getGraphicDataFromData(const std::vector<Node> &inpu
     Vec2u targetSize = window->getSize();
     double scaleFactor = std::min(1 / (maxX - minX) * targetSize.x(), 1 / (maxY - minY) * targetSize.y());
 
-    auto graphicData = FullGraphicData();
+    auto graphicData = FullGraphicDataWorstEdges();
     for (const auto& circle : inputNodes) {
         auto newCircle = circle;
         newCircle.position -= positionOffset;

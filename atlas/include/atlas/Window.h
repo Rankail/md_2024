@@ -26,7 +26,11 @@ public:
     virtual ~Window();
 
     virtual void init();
-    virtual void render(const FullGraphicData& data);
+    void render(const FullGraphicData& data);
+    void render(const FullGraphicDataWorstEdges& data);
+    void render(const FullGraphicData2& data);
+    void renderBasicGraphicData(const FullGraphicData& data);
+    void renderStats(const FullGraphicData& data);
 
     void close();
 

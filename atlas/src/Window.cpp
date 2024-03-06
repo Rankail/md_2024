@@ -138,27 +138,25 @@ void Window::init() {
     dc->init();
 }
 
+
+
 void Window::render(const FullGraphicData& data) {
-    glClearColor(0.94, 0.94, 0.94, 1.f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    renderBasicGraphicData(data);
+    renderStats(data);
+}
 
-    const Color colorPalette[] = {
-        Colors::ORANGE,
-        Colors::AQUAMARINE,
-        Colors::LIGHT_SEA_GREEN,
-        Colors::OLIVE,
-        Colors::PURPLE,
-        Colors::GRAY,
-        Colors::YELLOW,
-        Colors::RED
-    };
-    unsigned colorIdx = 0;
+void Window::handleEvent(const SDL_Event &event) {
+    if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
+        size = {event.window.data1, event.window.data2};
 
-    for (const auto& circle : data.circles) {
-        dc->drawCircle(circle.position, circle.radius,
-            Brush::solid(colorPalette[colorIdx].withAlpha(0.3)));
-        colorIdx = (colorIdx + 1) % 8;
+        glViewport(0, 0, size.x(), size.y());
+
+        dc->setSize(size.x(), size.y());
     }
+}
+
+void Window::render(const FullGraphicDataWorstEdges& data) {
+    renderBasicGraphicData(data);
 
     for (int i = 0; i < data.edges.size(); i++) {
         const auto& edge = data.edges[i];
@@ -179,12 +177,58 @@ void Window::render(const FullGraphicData& data) {
             1);
     }
 
+    renderStats(data);
+}
+
+void Window::render(const FullGraphicData2& data) {
+    renderBasicGraphicData(data);
+
+    for (int i = 0; i < data.edges.size(); i++) {
+        const auto& edge = data.edges[i];
+        Color c = Colors::BLACK;
+        if (data.worstOverlap == edge.idxs) {
+            c.b = 1.f;
+        }
+        dc->drawLine(
+            data.circles[edge.idxs.first].position.toFloat(),
+            data.circles[edge.idxs.second].position.toFloat(),
+            Brush::solid(c),
+            1);
+    }
+
+    renderStats(data);
+}
+
+void Window::renderBasicGraphicData(const FullGraphicData& data) {
+    glClearColor(0.94, 0.94, 0.94, 1.f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    const Color colorPalette[] = {
+        Colors::ORANGE,
+        Colors::AQUAMARINE,
+        Colors::LIGHT_SEA_GREEN,
+        Colors::OLIVE,
+        Colors::PURPLE,
+        Colors::GRAY,
+        Colors::YELLOW,
+        Colors::RED
+    };
+    unsigned colorIdx = 0;
+
+    for (const auto& circle : data.circles) {
+        dc->drawCircle(circle.position, circle.radius,
+            Brush::solid(colorPalette[colorIdx].withAlpha(0.3)));
+        colorIdx = (colorIdx + 1) % 8;
+    }
+}
+
+void Window::renderStats(const FullGraphicData& data) {
     const auto x = narrow(dc->getWidth() * 4 / 5);
     const auto font = dc->getFontFamily("rodin")->getFont(16);
     const auto textCol = Brush::solid(Colors::BLACK);
-    dc->drawText({x, 10}, "Max Overlap: " + std::to_string(data.maxOverlap), font, textCol);
-    dc->drawText({x, 30}, "Max Distance: " + std::to_string(data.maxDistance), font, textCol);
-    dc->drawText({x, 50}, "Max Angle: " + std::to_string(data.maxAngle), font, textCol);
+    dc->drawText({x, 10}, "Max Overlap: " + std::to_string(data.overlap), font, textCol);
+    dc->drawText({x, 30}, "Max Distance: " + std::to_string(data.distance), font, textCol);
+    dc->drawText({x, 50}, "Max Angle: " + std::to_string(data.angle), font, textCol);
     dc->drawText({x, 70}, "Score: " + std::to_string(data.score), font, textCol);
     dc->drawText({x, 90}, "Max Score: " + std::to_string(data.maxScore), font, textCol);
 
@@ -193,14 +237,4 @@ void Window::render(const FullGraphicData& data) {
     dc->drawText({20, 10}, "Distance Factor: " + std::to_string(data.distanceFactor), font, textCol);
     dc->drawText({20, 30}, "Overlap Factor: " + std::to_string(data.overlapFactor), font, textCol);
     dc->drawText({20, 50}, "Angle Factor: " + std::to_string(data.angleFactor), font, textCol);
-}
-
-void Window::handleEvent(const SDL_Event &event) {
-    if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
-        size = {event.window.data1, event.window.data2};
-
-        glViewport(0, 0, size.x(), size.y());
-
-        dc->setSize(size.x(), size.y());
-    }
 }

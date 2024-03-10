@@ -7,6 +7,8 @@
 #include "math/vec.h"
 #include "utils.h"
 
+// -- basic --
+
 struct Node {
     unsigned index;
     std::string name;
@@ -18,6 +20,8 @@ struct FullInputData {
     std::vector<Node> nodes;
     std::vector<uPair> edges;
 };
+
+// -- graphic --
 
 struct GraphicEdge {
     bool touching = false;
@@ -51,6 +55,32 @@ struct FullGraphicDataWorstEdges : public FullGraphicData {
 struct FullGraphicData2  : public FullGraphicData {
     uPair worstOverlap = {-1, -1};
 };
+
+// -- polygon --
+
+struct PolygonNode;
+
+struct PolygonEdge {
+    double angle;
+    double originalAngle;
+    std::shared_ptr<PolygonNode> a;
+    std::shared_ptr<PolygonNode> b;
+
+    static std::shared_ptr<PolygonEdge> fromNodes(std::shared_ptr<PolygonNode> a, std::shared_ptr<PolygonNode> b);
+};
+
+struct PolygonNode : public Node {
+    std::vector<std::shared_ptr<PolygonEdge>> edges{}; // ordered clockwise
+
+    PolygonNode(const Node& node)
+        : Node(node), edges{} {}
+};
+
+struct Polygon {
+    std::vector<std::shared_ptr<PolygonEdge>> edges{}; // clockwise
+};
+
+// -- helper --
 
 int calculateScore(const std::vector<Node>& original, const std::vector<Node>& nodes, const std::vector<uPair>& edges);
 int calculateScore2(const std::vector<Node>& original, const std::vector<Node>& nodes, const std::vector<uPair>& edges);

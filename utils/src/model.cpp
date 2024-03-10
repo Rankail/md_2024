@@ -112,3 +112,15 @@ int calculateScore2(const std::vector<Node> &original, const std::vector<Node> &
 
     return scoreRounded;
 }
+
+std::shared_ptr<PolygonEdge> PolygonEdge::fromNodes(std::shared_ptr<PolygonNode> a, std::shared_ptr<PolygonNode> b) {
+    auto edge = std::make_shared<PolygonEdge>();
+    edge->a = a;
+    edge->b = b;
+
+    double angle = (b->position - a->position).smallestAngleTo({1, 0});
+    edge->originalAngle = angle;
+    edge->angle = angle;
+
+    return edge;
+}

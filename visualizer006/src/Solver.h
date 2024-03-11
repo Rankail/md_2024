@@ -30,9 +30,9 @@ public:
 
     // iterations
     void iteration();
-    void updateWorstDistance();
+    void updateDistances();
     void updateWorstOverlap();
-    void updateWorstAngle();
+    void updateAngles();
 
     // update state specific
     void findSmallestNotColliding();

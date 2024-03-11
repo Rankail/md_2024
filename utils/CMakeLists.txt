@@ -2,7 +2,6 @@ project(utils)
 
 set(UTILS_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/utils/include")
 set(UTILS_SRC_DIR "${CMAKE_SOURCE_DIR}/utils/src")
-set(UTILS_RSC_DIR "${CMAKE_SOURCE_DIR}/utils/rsc")
 
 add_library(utils
     src/utils.cpp
@@ -11,7 +10,7 @@ add_library(utils
     src/reader/InputReader.cpp
     src/reader/OutputReader.cpp
     src/printer/OutputPrinter.cpp
-        src/model.cpp
+    src/model.cpp
 )
 
 target_include_directories(utils PRIVATE "${UTILS_INCLUDE_DIR}")

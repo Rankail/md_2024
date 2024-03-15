@@ -126,7 +126,7 @@ void Visualizer::onKeyUp(const SDL_Event &event) {
 
         case SDL_SCANCODE_C: solver.findSmallestNotColliding(); break;
         case SDL_SCANCODE_X: solver.bestRotation(); break;
-        case SDL_SCANCODE_Z: solver.randomizePositions(); break;
+        //case SDL_SCANCODE_Z: solver.randomizePositions(); break;
 
         case SDL_SCANCODE_P: {
             // solver.printToFile();
@@ -146,12 +146,12 @@ void Visualizer::onKeyUp(const SDL_Event &event) {
         case SDL_SCANCODE_0: switchTo('9'); break;
         case SDL_SCANCODE_MINUS: switchTo('q'); break;
         case SDL_SCANCODE_EQUALS: switchTo('w'); break;
-        case SDL_SCANCODE_U: solver.strengthenDistance(); break;
-        case SDL_SCANCODE_I: solver.strengthenOverlap(); break;
-        case SDL_SCANCODE_O: solver.strengthenAngle(); break;
-        case SDL_SCANCODE_J: solver.weakenDistance(); break;
-        case SDL_SCANCODE_K: solver.weakenOverlap(); break;
-        case SDL_SCANCODE_L: solver.weakenAngle(); break;
+//        case SDL_SCANCODE_U: solver.strengthenDistance(); break;
+//        case SDL_SCANCODE_I: solver.strengthenOverlap(); break;
+//        case SDL_SCANCODE_O: solver.strengthenAngle(); break;
+//        case SDL_SCANCODE_J: solver.weakenDistance(); break;
+//        case SDL_SCANCODE_K: solver.weakenOverlap(); break;
+//        case SDL_SCANCODE_L: solver.weakenAngle(); break;
 
         default: return;
     }

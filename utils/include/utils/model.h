@@ -63,21 +63,21 @@ struct PolygonNode;
 struct PolygonEdge {
     double angle;
     double originalAngle;
-    std::shared_ptr<PolygonNode> a;
-    std::shared_ptr<PolygonNode> b;
+    PolygonNode* a;
+    PolygonNode* b;
 
-    static std::shared_ptr<PolygonEdge> fromNodes(std::shared_ptr<PolygonNode> a, std::shared_ptr<PolygonNode> b);
+    static PolygonEdge* fromNodes(PolygonNode* a, PolygonNode* b);
 };
 
 struct PolygonNode : public Node {
-    std::vector<std::shared_ptr<PolygonEdge>> edges{}; // ordered clockwise
+    std::vector<PolygonEdge*> edges{}; // ordered clockwise
 
     PolygonNode(const Node& node)
         : Node(node), edges{} {}
 };
 
-struct Polygon {
-    std::vector<std::shared_ptr<PolygonEdge>> edges{}; // clockwise
+struct PolygonShape {
+    std::vector<PolygonEdge*> edges{}; // clockwise
 };
 
 // -- helper --

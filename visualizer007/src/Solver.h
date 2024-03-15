@@ -8,9 +8,10 @@ private:
     std::string filename;
     unsigned edgeInputCount = 0;
 
-    std::vector<std::shared_ptr<PolygonNode>> nodes;
-    std::vector<std::shared_ptr<PolygonEdge>> edges;
-    std::vector<Polygon> polygons;
+    std::vector<PolygonNode*> nodes;
+    std::vector<PolygonEdge*> edges;
+    std::vector<std::vector<bool>> edgeMatrix;
+    std::vector<PolygonShape*> polygons;
 
     FullGraphicData graphicData;
     Vec2u targetSize;
@@ -25,6 +26,9 @@ public:
     bool init(const std::string& inputFilename);
     void run(unsigned iterations);
 
+    void createPolygons();
+    PolygonShape* createPolygon(PolygonEdge* startEdge);
+
     // iterations
     void iteration();
 
@@ -34,13 +38,14 @@ public:
     //void randomizePositions();
 
     // update stats
-    void calculateWorstAndMakeGraphic();
+    void makeGraphic(bool updateScore = true);
+    void calculateScore();
 
     // output
     void printToFile();
 
     // get Data
-    const std::vector<std::shared_ptr<PolygonNode>>& getNodes() const { return nodes; }
+    const std::vector<PolygonNode*>& getNodes() const { return nodes; }
     const FullGraphicData& getGraphicData() const { return graphicData; }
 
     // camera

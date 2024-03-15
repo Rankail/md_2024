@@ -11,7 +11,7 @@ private:
     Window* window;
     bool quit = false;
     Solver solver;
-    FullGraphicData2 graphicData;
+    FullGraphicData graphicData;
 
 public:
     Visualizer() = default;

@@ -136,6 +136,8 @@ void Window::init() {
 
     dc->setSize((unsigned)w, (unsigned)h);
     dc->init();
+
+    prevTime = SDL_GetTicks();
 }
 
 
@@ -156,7 +158,7 @@ void Window::handleEvent(const SDL_Event &event) {
 }
 
 void Window::render(const FullGraphicDataWorstEdges& data) {
-    renderBasicGraphicData(data);
+    renderBasicGraphicData(data, false);
 
     for (int i = 0; i < data.edges.size(); i++) {
         const auto& edge = data.edges[i];
@@ -181,7 +183,7 @@ void Window::render(const FullGraphicDataWorstEdges& data) {
 }
 
 void Window::render(const FullGraphicData2& data) {
-    renderBasicGraphicData(data);
+    renderBasicGraphicData(data, false);
 
     for (int i = 0; i < data.edges.size(); i++) {
         const auto& edge = data.edges[i];
@@ -199,7 +201,7 @@ void Window::render(const FullGraphicData2& data) {
     renderStats(data);
 }
 
-void Window::renderBasicGraphicData(const FullGraphicData& data) {
+void Window::renderBasicGraphicData(const FullGraphicData& data, bool drawLines) {
     glClearColor(0.94, 0.94, 0.94, 1.f);
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -220,6 +222,18 @@ void Window::renderBasicGraphicData(const FullGraphicData& data) {
             Brush::solid(colorPalette[colorIdx].withAlpha(0.3)));
         colorIdx = (colorIdx + 1) % 8;
     }
+
+    if (drawLines) {
+        for (int i = 0; i < data.edges.size(); i++) {
+            const auto& edge = data.edges[i];
+            dc->drawLine(
+                data.circles[edge.idxs.first].position.toFloat(),
+                data.circles[edge.idxs.second].position.toFloat(),
+                Brush::solid(Colors::BLACK),
+                1
+            );
+        }
+    }
 }
 
 void Window::renderStats(const FullGraphicData& data) {
@@ -237,4 +251,10 @@ void Window::renderStats(const FullGraphicData& data) {
     dc->drawText({20, 10}, "Distance Factor: " + std::to_string(data.distanceFactor), font, textCol);
     dc->drawText({20, 30}, "Overlap Factor: " + std::to_string(data.overlapFactor), font, textCol);
     dc->drawText({20, 50}, "Angle Factor: " + std::to_string(data.angleFactor), font, textCol);
+
+    const auto curTime = SDL_GetTicks();
+    double dt = 1000 / (curTime - prevTime);
+    prevTime = curTime;
+
+    dc->drawText({20, narrow(dc->getHeight() - 35)}, std::to_string(dt), font, textCol);
 }

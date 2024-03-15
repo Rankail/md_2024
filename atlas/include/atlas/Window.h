@@ -20,6 +20,8 @@ protected:
 
     Vec2u size;
 
+    uint32_t prevTime;
+
 public:
     explicit Window(const std::string& title, const Vec2u& size = {800, 600});
     explicit Window(const std::string& title, Vec2i position, Vec2u size, WindowFlag flags);
@@ -29,7 +31,7 @@ public:
     void render(const FullGraphicData& data);
     void render(const FullGraphicDataWorstEdges& data);
     void render(const FullGraphicData2& data);
-    void renderBasicGraphicData(const FullGraphicData& data);
+    void renderBasicGraphicData(const FullGraphicData& data, bool drawLines = true);
     void renderStats(const FullGraphicData& data);
 
     void close();

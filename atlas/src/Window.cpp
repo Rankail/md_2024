@@ -251,9 +251,10 @@ void Window::renderStats(const FullGraphicData& data) {
     dc->drawText({20, 10}, "Distance Factor: " + std::to_string(data.distanceFactor), font, textCol);
     dc->drawText({20, 30}, "Overlap Factor: " + std::to_string(data.overlapFactor), font, textCol);
     dc->drawText({20, 50}, "Angle Factor: " + std::to_string(data.angleFactor), font, textCol);
+    dc->drawText({20, 80}, "Step Size: " + std::to_string(data.stepSize), font, textCol);
 
     const auto curTime = SDL_GetTicks();
-    double dt = 1000 / (curTime - prevTime);
+    double dt = 1000.0 / std::max(1.0, (double)curTime - prevTime);
     prevTime = curTime;
 
     dc->drawText({20, narrow(dc->getHeight() - 35)}, std::to_string(dt), font, textCol);

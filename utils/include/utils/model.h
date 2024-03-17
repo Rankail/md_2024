@@ -43,6 +43,8 @@ struct FullGraphicData {
     double overlapFactor = 0.1;
     double angleFactor = 0.1;
 
+    double stepSize = 1.0;
+
     unsigned totalSteps = 0;
 };
 

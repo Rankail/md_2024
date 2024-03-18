@@ -322,6 +322,16 @@ public:
     }
 
     MAT_TEMPLATE
+    bool operator==(Matrix<M, N, U> const& m) const {
+        for (int i = 0; i < M*N; i++) {
+            if (m.get(i) != this->data[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    MAT_TEMPLATE
     Type& add(Matrix<M, N, U> const& m) {
         return *this += m;
     }

@@ -1,0 +1,3 @@
+# Mathe Dual Wettbewerb 2024 - tetris-for-the-win
+
+documentation coming soon ...

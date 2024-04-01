@@ -34,10 +34,12 @@ public:
     void iteration();
 
     void calculateOverlapDerivatives();
+    void calculateOverlapDerivatives2();
     void calculateDistDerivatives();
+    void calculateDistDerivatives2();
     void calculateAngleDerivatives();
     Vec2d calculateAngleDerivative(Vec2d nDiff, Vec2d oDiff);
-    Vec2d calculateAngleDerivative2(Vec2d nDiff, Vec2d oDiff);
+    Vec2d calculateAngleDerivative2(Vec2d nDiff, Vec2d oDiff, double r12);
 
     void applyGradients(const std::vector<Vec2d>& gradients, double stepSize = 1.0);
 

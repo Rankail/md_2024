@@ -17,7 +17,7 @@ bool Solver::init(const std::string& filename) {
 
     totalSteps = 0;
 
-    stepSize = 1.0;
+    stepSize = 0.01;
 
     original.clear();
     nodes.clear();
@@ -99,7 +99,6 @@ void Solver::calculateScore() {
 
     for (int i = 0; i < nodes.size() - 1; i++) {
         for (int j = i + 1; j < nodes.size(); j++) {
-            edgeCount++;
             const auto& node1 = nodes[i];
             const auto& node2 = nodes[j];
             const auto diff = node1.position - node2.position;
@@ -113,6 +112,8 @@ void Solver::calculateScore() {
             }
 
             if (!edges[i][j]) continue;
+
+            edgeCount++;
 
             if (dist > r12) {
                 const auto distance = (dist - r12) / r12;
@@ -128,8 +129,8 @@ void Solver::calculateScore() {
     }
 
     maxOverlap *= 100.0;
-    const auto angleAvg = angleSum * 100.0 / edgeInputCount;
-    const auto distanceAvg = distanceSum * 100.0 / edgeInputCount;
+    const auto angleAvg = angleSum * 100.0 / edgeCount;
+    const auto distanceAvg = distanceSum * 100.0 / edgeCount;
 
     const auto overlapFactor = maxOverlap * maxOverlap * 0.1;
     const auto distanceFactor = distanceAvg * distanceAvg * 0.05;
@@ -154,8 +155,9 @@ void Solver::calculateScore() {
 void Solver::run(unsigned iterations) {
     for (int i = 0; i < iterations; i++) {
         iteration();
+        calculateScore();
     }
-    bestRotation();
+    //bestRotation();
     makeGraphic();
     totalSteps += iterations;
 }
@@ -191,23 +193,15 @@ void Solver::iteration() {
     distGradients = std::vector<Vec2d>(nodes.size(), {0.0, 0.0});
     overlapGradients = std::vector<Vec2d>(nodes.size(), {0.0, 0.0});
 
-    calculateOverlapDerivatives();
+    calculateOverlapDerivatives2();
     calculateAngleDerivatives();
-    calculateDistDerivatives();
+    calculateDistDerivatives2();
 
-    double maxValue = std::max(std::max(graphicData.overlap * 2, graphicData.distance), graphicData.angle);
+    double maxValue = std::max(std::max(graphicData.overlap * 10, graphicData.distance), graphicData.angle * 0.5);
 
-    applyGradients(overlapGradients, 2 * graphicData.overlap / maxValue);
-    applyGradients(angleGradients, graphicData.angle / maxValue);
-    applyGradients(distGradients, graphicData.distance / maxValue);
-
-
-        // derivative of overlap?
-            // try with average => abs of dist
-            // ignore if not maximum
-            // only activate if close to maximum
-
-
+    applyGradients(overlapGradients, stepSize * 10 * graphicData.overlap / maxValue);
+    applyGradients(angleGradients, stepSize * graphicData.angle * 0.5 / maxValue);
+    applyGradients(distGradients, stepSize * graphicData.distance / maxValue);
 }
 
 void Solver::setTargetSize(Vec2u targetSize) {
@@ -316,6 +310,25 @@ void Solver::calculateOverlapDerivatives() {
     }
 }
 
+void Solver::calculateOverlapDerivatives2() {
+    for (int i = 0; i < nodes.size() - 1; i++) {
+        for (int j = i + 1; j < nodes.size(); j++) {
+            const auto& n1 = nodes[i];
+            const auto& n2 = nodes[j];
+            const auto diff = n2.position - n1.position;
+            const auto dist = std::hypot(diff.x(), diff.y());
+            const auto r12 = n1.radius + n2.radius;
+
+            if (dist > r12) continue;
+
+            Vec2d gradient = diff / dist * (r12 - dist);
+
+            overlapGradients[i] -= gradient;
+            overlapGradients[j] += gradient;
+        }
+    }
+}
+
 void Solver::calculateDistDerivatives() {
     for (int i = 0; i < nodes.size(); i++) {
         const auto& n1 = nodes[i];
@@ -330,10 +343,10 @@ void Solver::calculateDistDerivatives() {
             if (dist < r12) continue;
             // derivative for x
             double dx = (n1.position.x() - n2.position.x())
-                / (r12 * dist);
+                        / (r12 * dist);
             // derivative for y
             double dy = (n1.position.y() - n2.position.y())
-                / (r12 * dist);
+                        / (r12 * dist);
 
             Vec2d gradient = Vec2d{dx, dy};
 
@@ -345,6 +358,26 @@ void Solver::calculateDistDerivatives() {
             gradient *= 0.05;
 
             distGradients[i] -= gradient;
+        }
+    }
+}
+
+void Solver::calculateDistDerivatives2() {
+    for (int i = 0; i < nodes.size(); i++) {
+        const auto& n1 = nodes[i];
+        for (int j = 0; j < nodes.size(); j++) {
+            if (!edges[i][j]) continue;
+
+            const auto& n2 = nodes[j];
+
+            const auto diff = n2.position - n1.position;
+            const auto dist = std::hypot(diff.x(), diff.y());
+            const auto r12 = n1.radius + n2.radius;
+            if (dist < r12) continue;
+            // derivative for x
+            Vec2d gradient = diff / dist * (dist - r12);
+
+            distGradients[i] += gradient;
         }
     }
 }
@@ -362,7 +395,7 @@ void Solver::calculateAngleDerivatives() {
             const auto nDiff = n2.position - n1.position;
             const auto oDiff = o2.position - o1.position;
 
-            auto gradient = calculateAngleDerivative2(nDiff, oDiff);
+            auto gradient = calculateAngleDerivative2(nDiff, oDiff, o1.radius + o2.radius);
 
             gradient *= 100.0 / std::numbers::pi / edgeInputCount;
 
@@ -447,16 +480,14 @@ Vec2d Solver::calculateAngleDerivative(Vec2d nDiff, Vec2d oDiff) {
     return {dx, dy};
 }
 
-Vec2d Solver::calculateAngleDerivative2(Vec2d nDiff, Vec2d oDiff) {
+Vec2d Solver::calculateAngleDerivative2(Vec2d nDiff, Vec2d oDiff, double r12) {
     if (nDiff == oDiff) return {0.0, 0.0};
 
-    const auto nLen = nDiff.norm();
     const auto oLen = oDiff.norm();
 
-    const auto d = nDiff * oDiff / (2.0 * nLen * oLen);
+    oDiff *= r12 / oLen;
 
-    auto angle = acos(d);
-    Vec2d gradient{-sin(angle), -d};
+    Vec2d gradient{nDiff - oDiff};
 
     return gradient;
 }
@@ -477,8 +508,10 @@ void Solver::applyGradients(const std::vector<Vec2d> &gradients, double stepSize
 
 void Solver::increaseStepSize() {
     stepSize *= 1.5;
+    makeGraphic();
 }
 
 void Solver::decreaseStepSize() {
     stepSize *= 2. / 3.;
+    makeGraphic();
 }

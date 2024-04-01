@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
     if (itStr.has_value()) {
         iterations = std::stoul(itStr.value());
     } else {
-        std::string line;
+        std::cout << "Iterations: ";
         std::cin >> iterations;
     }
     
